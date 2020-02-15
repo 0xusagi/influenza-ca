@@ -12,6 +12,7 @@ double kImmLifespan;
 double kCellLifespan;
 double kInfectLifespan;
 double kInfectInit;
+double kDeadInit;
 double kInfectRate;
 double kInfectDelay;
 double kExpressDelay;
@@ -44,6 +45,9 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "infect_init")
         kInfectInit = std::stod(value);
+
+    else if (key == "dead_init")
+        kDeadInit = std::stod(value);
 
     else if (key == "infect_rate")
         kInfectRate = std::stod(value);
@@ -114,6 +118,7 @@ void print_config() {
     printf("- Cell lifespan: %f\n", kCellLifespan);
     printf("- Infect lifespan: %f\n", kInfectLifespan);
     printf("- Infect init: %f\n", kInfectInit);
+    printf("- Dead init: %f\n", kDeadInit);
     printf("- Infect rate: %f\n", kInfectRate);
     printf("- Infect delay: %f\n", kInfectDelay);
     printf("- Express delay: %f\n", kExpressDelay);

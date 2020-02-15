@@ -13,7 +13,10 @@ include_directories (src)
 
 set (src 
         src/config.cpp 
-        src/main.cpp)
+        src/epithelial_cell.cpp 
+        src/main.cpp 
+        src/utils.cpp 
+        src/world.cpp)
 
 add_executable(simulation ${src})
 
