@@ -14,6 +14,7 @@ include_directories (src)
 set (src 
         src/config.cpp 
         src/epithelial_cell.cpp 
+        src/immune_cell.cpp 
         src/main.cpp 
         src/utils.cpp 
         src/world.cpp)

@@ -8,9 +8,7 @@ EpithelialCell::EpithelialCell(int x, int y, int age, int infect_time, Epithelia
     y(y),
     age(age),
     infect_time(infect_time),
-    state(state) {
-
-}
+    state(state) {}
 
 void EpithelialCell::Update(World& world) {
     age++;
@@ -51,7 +49,7 @@ void EpithelialCell::UpdateHealthy(World& world) {
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
-            if (neighbour_state == EpithelialState::EXPRESSING || neighbour_state == EpithelialState::INFECTIOUS) {
+            if (neighbour_state == EpithelialState::INFECTIOUS) {
                 if (random_p() < kInfectRate / 8) {
                     state = EpithelialState::INFECTED;
                     infect_time = 0;
@@ -107,7 +105,7 @@ void EpithelialCell::UpdateDead(World& world) {
                 int new_x = return_in_bounds_x(x + i);
                 int new_y = return_in_bounds_y(y + j);
                 EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
-                if (neighbour_state == EpithelialState::EXPRESSING || neighbour_state == EpithelialState::INFECTIOUS) {
+                if (neighbour_state == EpithelialState::INFECTIOUS) {
                     if (random_p() < kInfectRate / 8) {
                         state = EpithelialState::INFECTED;
                         age = 0;
