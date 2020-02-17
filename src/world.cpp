@@ -174,8 +174,6 @@ void World::UpdateImmuneCells() {
         int y = RandomY();
         immune_cells.push_back(ImmuneCell(x, y, -kRecruitDelay, ImmuneState::MATURE));
     }
-
-    printf("immune cells to be added: %d\n", immune_cells_to_be_added);
 }
 
 void World::MatureImmuneCellRecognitionEvent(int x, int y) {
@@ -202,7 +200,6 @@ void World::PrintTimeStepToFile(FILE* fp) {
     double p_immune = 1.0 * counts.immune / kTotalEpithelialCells;
 
     fprintf(fp, "%f,%f,%f,%f\n", p_healthy, p_infected, p_dead, p_immune);
-    printf("%f,%f,%f,%f\n", p_healthy, p_infected, p_dead, p_immune);
 }
 
 int World::RandomX() {

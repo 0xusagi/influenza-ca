@@ -97,7 +97,6 @@ void EpithelialCell::UpdateDead(World& world) {
     // revive cell
     double p_able_to_divide = 1 / kDivisionTime * world.prev_counts.healthy / world.prev_counts.dead;
     double p = random_p();
-    //printf("%d, %d, %f, %f", world.prev_counts.healthy, world.prev_counts.dead, p, p_able_to_divide);
     if (p < p_able_to_divide) {
         // decide if infected or healthy
         for (int i = -1; i <= 1; i++) {
@@ -120,8 +119,6 @@ void EpithelialCell::UpdateDead(World& world) {
         age = 0;
         infect_time = 0;
     }
-
-    //printf(", %d\n", state);
 }
 
 int EpithelialCell::IsDeadFromOldAge() {
