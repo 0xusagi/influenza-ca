@@ -49,6 +49,8 @@ private:
     int RandomEpithelialAge();
     std::uniform_int_distribution<int> immune_age_distribution;
     int RandomImmuneAge();
+    std::uniform_int_distribution<int> division_time_distribution;
+    int RandomDivisionTime();
 };
 
 #endif

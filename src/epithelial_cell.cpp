@@ -3,15 +3,23 @@
 #include "utils.h"
 #include "world.h"
 
-EpithelialCell::EpithelialCell(int x, int y, int age, int infect_time, EpithelialState state) :
+EpithelialCell::EpithelialCell(int x, int y, int age, int infect_time, int time_left_to_divide, EpithelialState state) :
     x(x),
     y(y),
     age(age),
     infect_time(infect_time),
+    time_left_to_divide(time_left_to_divide),
     state(state) {}
 
 void EpithelialCell::Update(World& world) {
     age++;
+    time_left_to_divide--;
+
+    // cell has already divided 
+    // renew division time
+    if (time_left_to_divide < 0) {
+        time_left_to_divide = kDivisionTime;
+    }
 
     if (state == EpithelialState::HEALTHY) {
         UpdateHealthy(world);
@@ -95,30 +103,44 @@ void EpithelialCell::UpdateInfectious() {
 
 void EpithelialCell::UpdateDead(World& world) {
     // revive cell
-    double p_able_to_divide = 1 / kDivisionTime * world.prev_counts.healthy / world.prev_counts.dead;
+    double p_able_to_divide;
+    if (kGlobalEpithelialDivision) {
+        p_able_to_divide = GetGlobalDivisionRate(world);
+    } 
+    else {
+        p_able_to_divide = GetLocalDivisionRate(world);
+    }
+
     double p = random_p();
     if (p < p_able_to_divide) {
-        // decide if infected or healthy
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j<= 1; j++) {
-                int new_x = return_in_bounds_x(x + i);
-                int new_y = return_in_bounds_y(y + j);
-                EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
-                if (neighbour_state == EpithelialState::INFECTIOUS) {
-                    if (random_p() < kInfectRate / 8) {
-                        state = EpithelialState::INFECTED;
-                        age = 0;
-                        infect_time = 0;
-                        return;
-                    }
-                }
-            }
-        }
-
         state = EpithelialState::HEALTHY;
         age = 0;
         infect_time = 0;
     }
+}
+
+double EpithelialCell::GetGlobalDivisionRate(World& world) {
+    return 1 / kDivisionTime * world.prev_counts.healthy / world.prev_counts.dead;
+}
+
+double EpithelialCell::GetLocalDivisionRate(World& world) {
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            // skip current cell
+            if (i == 0 && j == 0) continue;
+
+            // if the neighbour is healthy and is time to divide,
+            int new_x = return_in_bounds_x(x + i);
+            int new_y = return_in_bounds_y(y + j);
+            EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->state;
+            if (neighbour_state == EpithelialState::HEALTHY && time_left_to_divide == 0) {
+                // return uniform probability for each neighbour
+                return 1.0 / 8.0;
+            }
+        }
+    }
+
+    return 0.0;
 }
 
 int EpithelialCell::IsDeadFromOldAge() {

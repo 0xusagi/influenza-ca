@@ -14,7 +14,8 @@ World::World()
     , x_distribution(0, kGridWidth - 1) 
     , y_distribution(0, kGridHeight - 1) 
     , epithelial_age_distribution(0, kCellLifespan) 
-    , immune_age_distribution(0, kImmLifespan) {
+    , immune_age_distribution(0, kImmLifespan) 
+    , division_time_distribution(0, kDivisionTime) {
     // initialise healthy cells
     printf("Initialising healthy cells\n");
     epithelial_cells = new EpithelialCell**[kGridWidth];
@@ -23,7 +24,8 @@ World::World()
 
         for (int y = 0; y < kGridHeight; y++) {
             int age = RandomEpithelialAge();
-            epithelial_cells[x][y] = new EpithelialCell(x, y, age, 0, EpithelialState::HEALTHY);
+            int division_time = RandomDivisionTime();
+            epithelial_cells[x][y] = new EpithelialCell(x, y, age, 0, division_time, EpithelialState::HEALTHY);
         }
     }
 
@@ -216,4 +218,8 @@ int World::RandomEpithelialAge() {
 
 int World::RandomImmuneAge() {
     return immune_age_distribution(rng);
+}
+
+int World::RandomDivisionTime() {
+    return division_time_distribution(rng);
 }

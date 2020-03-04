@@ -16,6 +16,7 @@ extern double kDivisionTime;
 extern double kBaseImmCell;
 extern double kRecruitDelay;
 extern double kRecruitment;
+extern int kGlobalEpithelialDivision;
 
 extern double kTotalEpithelialCells;
 extern int kSimulationLength;
