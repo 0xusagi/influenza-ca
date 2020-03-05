@@ -21,6 +21,7 @@ double kBaseImmCell;
 double kRecruitDelay;
 double kRecruitment;
 double kTotalEpithelialCells;
+int kGlobalEpithelialDivision;
 int kSimulationLength;
 int kNumSimulations;
 
@@ -69,6 +70,9 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "recruitment")
         kRecruitment = std::stod(value);
+
+    else if (key == "global_epithelial_division") 
+        kGlobalEpithelialDivision = std::stoi(value);
 
     else if (key == "simulation_hours")
         kSimulationLength = std::stod(value);
@@ -126,6 +130,7 @@ void print_config() {
     printf("- Base immune cells: %f\n", kBaseImmCell);
     printf("- Recruit delay: %f\n", kRecruitDelay);
     printf("- Recruitment: %f\n", kRecruitment);
+    printf("- Global epithelial cell division: %d\n", kGlobalEpithelialDivision);
     printf("- Simulation length: %dh\n", kSimulationLength);
     printf("- Number of simulations: %d\n", kNumSimulations);
 }
