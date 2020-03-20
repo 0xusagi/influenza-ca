@@ -3,3 +3,4 @@ out/
 *.png
 env/
 .DS_Store
+build/

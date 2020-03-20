@@ -15,6 +15,7 @@ infect_lifespan=24
 infect_init=0.01
 dead_init=0.0
 infect_rate=2
+infect_delay=6
 express_delay=4
 division_time=12
 base_imm_cell=0.00015
