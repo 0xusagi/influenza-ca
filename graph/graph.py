@@ -30,11 +30,14 @@ if __name__ == "__main__":
     t = line_count - 1
     x = np.arange(t)
     x_ticks = np.arange(0, t, 24 * 6)
-    plt.xticks(x_ticks)
+    x_labels = np.arange(0, t // (24 * 6) + 1)
+    plt.xticks(x_ticks, x_labels)
 
     for key in data.keys():
         plt.plot(x, data[key], label=key)
 
     plt.legend(loc='upper right')
+    plt.xlabel('time (days)')
+    plt.ylabel('% total cells')
 
     plt.savefig('influenza.png')
