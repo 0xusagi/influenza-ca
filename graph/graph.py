@@ -22,7 +22,7 @@ with open(sys.argv[1], "r") as f:
             all_simulations[-1]['healthy'].append(float(line[0]))
             all_simulations[-1]['infected'].append(float(line[1]))
             all_simulations[-1]['dead'].append(float(line[2]))
-            all_simulations[-1]['immune'].append(float(line[3])) 
+            all_simulations[-1]['immune'].append(float(line[3]))
             
 t = len(all_simulations[0]['healthy'])
 n_simulations = len(all_simulations)
