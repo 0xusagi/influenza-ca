@@ -7,7 +7,7 @@ extern double kFlowRate;
 extern double kImmLifespan;
 extern double kCellLifespan;
 extern double kInfectLifespan;
-extern double kInfectInit;
+extern double kSTVInfectInit;
 extern double kDeadInit;
 extern double kInfectRate;
 extern double kInfectDelay;

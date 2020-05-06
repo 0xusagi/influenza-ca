@@ -25,19 +25,19 @@ World::World()
         for (int y = 0; y < kGridHeight; y++) {
             int age = RandomEpithelialAge();
             int division_time = RandomDivisionTime();
-            epithelial_cells[x][y] = new EpithelialCell(x, y, age, 0, division_time, EpithelialState::HEALTHY);
+            epithelial_cells[x][y] = new EpithelialCell(x, y, age, 0, division_time);
         }
     }
 
     // initialise infected cells
-    printf("Initialising infected cells\n");
-    counts.infected = kTotalEpithelialCells * kInfectInit;
-    for (int i = 0; i < counts.infected; i++) {
+    printf("Initialising infected cells\n"); 
+    counts.s_infected = kTotalEpithelialCells * kSTVInfectInit;
+    for (int i = 0; i < counts.s_infected; i++) {
         int x = RandomX();
         int y = RandomY();
 
         if (epithelial_cells[x][y]->state == EpithelialState::HEALTHY) {
-            epithelial_cells[x][y]->state = EpithelialState::INFECTED;
+            epithelial_cells[x][y]->state = EpithelialState::S_INFECTED;
         }
         else {
             i--;
@@ -60,7 +60,7 @@ World::World()
     }
 
     // set the counts for healthy
-    counts.healthy = kTotalEpithelialCells - counts.infected - counts.dead;
+    counts.healthy = kTotalEpithelialCells - counts.s_infected - counts.dead;
 
     // initialise immune cells
     for (int i = 0; i < kBaseImmCell; i++) {
@@ -131,7 +131,7 @@ void World::UpdateEpithelialCells() {
                 counts.dead++;
             }
             else {
-                counts.infected++;
+                counts.s_infected++;
             }
         }
     }
@@ -181,7 +181,7 @@ void World::UpdateImmuneCells() {
 void World::MatureImmuneCellRecognitionEvent(int x, int y) {
     if (epithelial_cells[x][y]->state != EpithelialState::DEAD) {
         counts.dead++;
-        counts.infected--;
+        counts.s_infected--; // TODO
         epithelial_cells[x][y]->state = EpithelialState::DEAD;
     }
 
@@ -197,7 +197,7 @@ void World::MatureImmuneCellRecognitionEvent(int x, int y) {
 
 void World::PrintTimeStepToFile(FILE* fp) {
     double p_healthy = 1.0 * counts.healthy / kTotalEpithelialCells;
-    double p_infected = 1.0 * counts.infected / kTotalEpithelialCells;
+    double p_infected = 1.0 * counts.s_infected / kTotalEpithelialCells;
     double p_dead = 1.0 * counts.dead / kTotalEpithelialCells;
     double p_immune = 1.0 * counts.immune / kTotalEpithelialCells;
 

@@ -10,7 +10,10 @@ class ImmuneCell;
 
 typedef struct {
     int healthy;
-    int infected;
+    int s_infected;
+    int d_infected;
+    int c_infected;
+    int total_infected;
     int dead;
     int immune;
 } counts_t;

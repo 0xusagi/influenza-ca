@@ -1,3 +1,4 @@
+
 #include "config.h"
 #include "world.h"
 #include "utils.h"
@@ -31,6 +32,9 @@ int main(int argc, char *argv[]) {
     parse_config();
 
     run_simulations(options);
+
+    // call python script to plot results on graph
+    plot_graph(options);
 
     return 0;
 }

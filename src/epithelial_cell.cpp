@@ -3,13 +3,13 @@
 #include "utils.h"
 #include "world.h"
 
-EpithelialCell::EpithelialCell(int x, int y, int age, int infect_time, int time_left_to_divide, EpithelialState state) :
+EpithelialCell::EpithelialCell(int x, int y, int age, int infect_time, int time_left_to_divide) :
     x(x),
     y(y),
     age(age),
     infect_time(infect_time),
     time_left_to_divide(time_left_to_divide),
-    state(state) {}
+    state(EpithelialState::HEALTHY) {}
 
 void EpithelialCell::Update(World& world) {
     age++;
@@ -24,17 +24,17 @@ void EpithelialCell::Update(World& world) {
     if (state == EpithelialState::HEALTHY) {
         UpdateHealthy(world);
     }
-    else if (state == EpithelialState::INFECTED) {
+    else if (state == EpithelialState::S_INFECTED) {
         infect_time++;
-        UpdateInfected();
+        UpdateSTVInfected();
     }
-    else if (state == EpithelialState::EXPRESSING) {
+    else if (state == EpithelialState::S_EXPRESSING) {
         infect_time++;
-        UpdateExpressing();
+        UpdateSTVExpressing();
     }
-    else if (state == EpithelialState::INFECTIOUS) {
+    else if (state == EpithelialState::S_INFECTIOUS) {
         infect_time++;
-        UpdateInfectious();
+        UpdateSTVInfectious();
     }
     else {
         UpdateDead(world);
@@ -57,9 +57,9 @@ void EpithelialCell::UpdateHealthy(World& world) {
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
-            if (neighbour_state == EpithelialState::INFECTIOUS) {
+            if (neighbour_state == EpithelialState::S_INFECTIOUS) {
                 if (random_p() < kInfectRate / 8) {
-                    state = EpithelialState::INFECTED;
+                    state = EpithelialState::S_INFECTED;
                     infect_time = 0;
                     return;
                 }
@@ -68,7 +68,7 @@ void EpithelialCell::UpdateHealthy(World& world) {
     }
 }
 
-void EpithelialCell::UpdateInfected() {
+void EpithelialCell::UpdateSTVInfected() {
     if (IsDeadFromOldAge() || IsDeadFromInfection()) {
         state = EpithelialState::DEAD;
         return;
@@ -76,12 +76,12 @@ void EpithelialCell::UpdateInfected() {
 
     // becomes expressing
     if (infect_time > kExpressDelay) {
-        state = EpithelialState::EXPRESSING;
+        state = EpithelialState::S_EXPRESSING;
         return;
     }
 }
 
-void EpithelialCell::UpdateExpressing() {
+void EpithelialCell::UpdateSTVExpressing() {
     if (IsDeadFromOldAge() || IsDeadFromInfection()) {
         state = EpithelialState::DEAD;
         return;
@@ -89,12 +89,12 @@ void EpithelialCell::UpdateExpressing() {
 
     // beocmes infectious
     if (infect_time > kInfectDelay) {
-        state = EpithelialState::INFECTIOUS;
+        state = EpithelialState::S_INFECTIOUS;
         return;
     }
 }
 
-void EpithelialCell::UpdateInfectious() {
+void EpithelialCell::UpdateSTVInfectious() {
     if (IsDeadFromOldAge() || IsDeadFromInfection()) {
         state = EpithelialState::DEAD;
         return;

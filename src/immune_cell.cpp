@@ -37,7 +37,7 @@ void ImmuneCell::UpdateVirgin(World& world) {
 
     // recognition event
     EpithelialState epithelial_state = world.epithelial_cells[x][y]->prev_state;
-    if (epithelial_state == EpithelialState::EXPRESSING || epithelial_state == EpithelialState::INFECTIOUS) {
+    if (epithelial_state == EpithelialState::S_EXPRESSING || epithelial_state == EpithelialState::S_INFECTIOUS) {
         state = ImmuneState::MATURE;
         return;
     }
@@ -52,7 +52,7 @@ void ImmuneCell::UpdateMature(World& world) {
 
     // recognition event
     EpithelialState epithelial_state = world.epithelial_cells[x][y]->prev_state;
-    if (epithelial_state == EpithelialState::EXPRESSING || epithelial_state == EpithelialState::INFECTIOUS) {
+    if (epithelial_state == EpithelialState::S_EXPRESSING || epithelial_state == EpithelialState::S_INFECTIOUS) {
         world.MatureImmuneCellRecognitionEvent(x, y);
     }
 }

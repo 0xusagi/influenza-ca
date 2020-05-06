@@ -5,9 +5,13 @@ class World;
 
 enum class EpithelialState {
     HEALTHY,
-    INFECTED,
-    EXPRESSING,
-    INFECTIOUS,
+    S_INFECTED,
+    S_EXPRESSING,
+    S_INFECTIOUS,
+    D_INFECTED,
+    C_INFECTED,
+    C_EXPRESSING,
+    C_INFECTIOUS,
     DEAD
 };
 
@@ -19,16 +23,20 @@ public:
     int time_left_to_divide;
     EpithelialState prev_state, state;
 
-    EpithelialCell(int x, int y, int age, int infect_time, int time_left_to_divide, EpithelialState state);
+    EpithelialCell(int x, int y, int age, int infect_time, int time_left_to_divide);
     
     void Update(World& world);
     void FlipStates();
 
 private:
     void UpdateHealthy(World& world);
-    void UpdateInfected();
-    void UpdateExpressing();
-    void UpdateInfectious();
+    void UpdateSTVInfected();
+    void UpdateSTVExpressing();
+    void UpdateSTVInfectious();
+    void UpdateDIPInfected();
+    void UpdateCoInfected();
+    void UpdateCoExpressing();
+    void UpdateCoInfectious();
     void UpdateDead(World& world);
 
     // division rates
