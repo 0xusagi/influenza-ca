@@ -31,7 +31,7 @@ World::World()
 
     // initialise infected cells
     printf("Initialising infected cells\n"); 
-    counts.s_infected = kTotalEpithelialCells * kSTVInfectInit;
+    counts.s_infected = kTotalEpithelialCells * kStvInfectInit;
     for (int i = 0; i < counts.s_infected; i++) {
         int x = RandomX();
         int y = RandomY();

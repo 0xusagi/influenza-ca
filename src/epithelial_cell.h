@@ -30,10 +30,10 @@ public:
 
 private:
     void UpdateHealthy(World& world);
-    void UpdateSTVInfected();
-    void UpdateSTVExpressing();
-    void UpdateSTVInfectious();
-    void UpdateDIPInfected();
+    void UpdateStvInfected(World& world);
+    void UpdateStvExpressing();
+    void UpdateStvInfectious();
+    void UpdateDipInfected(World& world);
     void UpdateCoInfected();
     void UpdateCoExpressing();
     void UpdateCoInfectious();

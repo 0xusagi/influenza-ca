@@ -11,11 +11,17 @@ double kFlowRate;
 double kImmLifespan;
 double kCellLifespan;
 double kInfectLifespan;
-double kSTVInfectInit;
+double kStvInfectInit;
+double kDipInfectInit;
 double kDeadInit;
-double kInfectRate;
-double kInfectDelay;
-double kExpressDelay;
+double kStvErrorRate;
+double kCoErrorRate;
+double kStvInfectRate;
+double kCoInfectRate;
+double kStvInfectDelay;
+double kCoInfectDelay;
+double kStvExpressDelay;
+double kCoExpressDelay;
 double kDivisionTime;
 double kBaseImmCell;
 double kRecruitDelay;
@@ -45,19 +51,34 @@ void store_line(std::string key, std::string value) {
         kInfectLifespan = std::stod(value);
 
     else if (key == "infect_init")
-        kSTVInfectInit = std::stod(value);
+        kStvInfectInit = std::stod(value);
 
     else if (key == "dead_init")
         kDeadInit = std::stod(value);
 
-    else if (key == "infect_rate")
-        kInfectRate = std::stod(value);
+    else if (key == "stv_error_rate")
+        kStvErrorRate = std::stod(value);
 
-    else if (key == "infect_delay")
-        kInfectDelay = std::stod(value);
+    else if (key == "co_error_rate")
+        kCoErrorRate = std::stod(value);
 
-    else if (key == "express_delay")
-        kExpressDelay = std::stod(value);
+    else if (key == "stv_infect_rate")
+        kStvInfectRate = std::stod(value);
+
+    else if (key == "co_infect_rate")
+        kCoInfectRate = std::stod(value);
+
+    else if (key == "stv_infect_delay")
+        kStvInfectDelay = std::stod(value);
+
+    else if (key == "co_infect_delay")
+        kCoInfectDelay = std::stod(value);
+
+    else if (key == "stv_express_delay")
+        kStvExpressDelay = std::stod(value);
+
+    else if (key == "co_express_delay")
+        kCoExpressDelay = std::stod(value);
 
     else if (key == "division_time")
         kDivisionTime = std::stod(value);
@@ -103,9 +124,12 @@ void parse_config() {
     kImmLifespan *= kFlowRate;
     kCellLifespan *= kFlowRate;
     kInfectLifespan *= kFlowRate;
-    kInfectRate /= kFlowRate;
-    kInfectDelay *= kFlowRate;
-    kExpressDelay *= kFlowRate;
+    kStvInfectRate /= kFlowRate;
+    kCoInfectRate /= kFlowRate;
+    kStvInfectDelay *= kFlowRate;
+    kCoInfectDelay *= kFlowRate;
+    kStvExpressDelay *= kFlowRate;
+    kCoExpressDelay *= kFlowRate;
     kDivisionTime *= kFlowRate;
 
     kTotalEpithelialCells = kGridWidth * kGridHeight;
@@ -121,11 +145,17 @@ void print_config() {
     printf("- Immune lifespan: %f\n", kImmLifespan);
     printf("- Cell lifespan: %f\n", kCellLifespan);
     printf("- Infect lifespan: %f\n", kInfectLifespan);
-    printf("- Infect init: %f\n", kSTVInfectInit);
+    printf("- STV infect init: %f\n", kStvInfectInit);
+    printf("- DIP infect init: %f\n", kDipInfectInit);
     printf("- Dead init: %f\n", kDeadInit);
-    printf("- Infect rate: %f\n", kInfectRate);
-    printf("- Infect delay: %f\n", kInfectDelay);
-    printf("- Express delay: %f\n", kExpressDelay);
+    printf("- STV error rate: %f\n", kStvErrorRate);
+    printf("- Co error rate: %f\n", kCoErrorRate);
+    printf("- STV infect rate: %f\n", kStvInfectRate);
+    printf("- Co infect rate: %f\n", kCoInfectRate);
+    printf("- STV infect delay: %f\n", kStvInfectDelay);
+    printf("- Co infect delay: %f\n", kCoInfectDelay);
+    printf("- STV express delay: %f\n", kStvExpressDelay);
+    printf("- Co express delay: %f\n", kCoExpressDelay);
     printf("- Division time: %f\n", kDivisionTime);
     printf("- Base immune cells: %f\n", kBaseImmCell);
     printf("- Recruit delay: %f\n", kRecruitDelay);
