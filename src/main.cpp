@@ -11,7 +11,7 @@ void run_simulations(struct cmd_opts options) {
         printf("Simulation for round %d\n", t);
 
         // print the headers
-        fprintf(fp, "healthy,infected,dead,immune\n");
+        fprintf(fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
 
         printf("Initialising...\n");
         World world = World();

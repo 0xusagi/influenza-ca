@@ -50,8 +50,11 @@ void store_line(std::string key, std::string value) {
     else if (key == "infect_lifespan")
         kInfectLifespan = std::stod(value);
 
-    else if (key == "infect_init")
+    else if (key == "stv_infect_init")
         kStvInfectInit = std::stod(value);
+
+    else if (key == "dip_infect_init")
+        kDipInfectInit = std::stod(value);
 
     else if (key == "dead_init")
         kDeadInit = std::stod(value);

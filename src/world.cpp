@@ -130,8 +130,18 @@ void World::UpdateEpithelialCells() {
             else if (state == EpithelialState::DEAD) {
                 counts.dead++;
             }
-            else {
+            else if (state == EpithelialState::S_INFECTED ||
+                     state == EpithelialState::S_EXPRESSING || 
+                     state == EpithelialState::S_INFECTIOUS) {
                 counts.s_infected++;
+            }
+            else if (state == EpithelialState::D_INFECTED) {
+                counts.d_infected++;
+            }
+            else if (state == EpithelialState::C_INFECTED || 
+                     state == EpithelialState::C_EXPRESSING || 
+                     state == EpithelialState::C_INFECTIOUS) {
+                counts.c_infected++;
             }
         }
     }
@@ -179,9 +189,20 @@ void World::UpdateImmuneCells() {
 }
 
 void World::MatureImmuneCellRecognitionEvent(int x, int y) {
-    if (epithelial_cells[x][y]->state != EpithelialState::DEAD) {
+    EpithelialState epithelial_state = epithelial_cells[x][y]->state;
+    if (epithelial_state != EpithelialState::DEAD) {
         counts.dead++;
-        counts.s_infected--; // TODO
+
+        if (epithelial_state == EpithelialState::S_EXPRESSING || 
+            epithelial_state == EpithelialState::S_INFECTIOUS) {
+            counts.s_infected--;
+        }
+        else if (epithelial_state == EpithelialState::D_INFECTED) {
+            counts.d_infected--;
+        }
+        else {
+            counts.c_infected--;
+        }
         epithelial_cells[x][y]->state = EpithelialState::DEAD;
     }
 
@@ -197,11 +218,13 @@ void World::MatureImmuneCellRecognitionEvent(int x, int y) {
 
 void World::PrintTimeStepToFile(FILE* fp) {
     double p_healthy = 1.0 * counts.healthy / kTotalEpithelialCells;
-    double p_infected = 1.0 * counts.s_infected / kTotalEpithelialCells;
+    double p_stv_infected = 1.0 * counts.s_infected / kTotalEpithelialCells;
+    double p_dip_infected = 1.0 * counts.d_infected / kTotalEpithelialCells;
+    double p_co_infected = 1.0 * counts.c_infected / kTotalEpithelialCells;
     double p_dead = 1.0 * counts.dead / kTotalEpithelialCells;
     double p_immune = 1.0 * counts.immune / kTotalEpithelialCells;
 
-    fprintf(fp, "%f,%f,%f,%f\n", p_healthy, p_infected, p_dead, p_immune);
+    fprintf(fp, "%f,%f,%f,%f,%f,%f\n", p_healthy, p_stv_infected, p_dip_infected, p_co_infected, p_dead, p_immune);
 }
 
 int World::RandomX() {

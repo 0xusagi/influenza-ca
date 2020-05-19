@@ -67,8 +67,8 @@ void EpithelialCell::UpdateHealthy(World& world) {
     }
 
     // healthy cell becomes infected
-    int stv;
-    int dip;
+    int stv = 0;
+    int dip = 0;
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
             int new_x = return_in_bounds_x(x + i);
