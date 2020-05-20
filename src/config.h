@@ -24,6 +24,9 @@ extern double kRecruitDelay;
 extern double kRecruitment;
 extern int kGlobalEpithelialDivision;
 
+extern double kDipExtInit;
+extern double kDipExtTime;
+
 extern double kTotalEpithelialCells;
 extern int kSimulationLength;
 extern int kNumSimulations;

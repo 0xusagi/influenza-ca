@@ -42,6 +42,8 @@ private:
 
     void PrintTimeStepToFile(FILE* fp);
 
+    void AddExtDip();
+
     std::uniform_int_distribution<int> x_distribution;
     int RandomX();
     std::uniform_int_distribution<int> y_distribution;

@@ -27,6 +27,10 @@ double kBaseImmCell;
 double kRecruitDelay;
 double kRecruitment;
 double kTotalEpithelialCells;
+
+double kDipExtInit;
+double kDipExtTime;
+
 int kGlobalEpithelialDivision;
 int kSimulationLength;
 int kNumSimulations;
@@ -95,6 +99,12 @@ void store_line(std::string key, std::string value) {
     else if (key == "recruitment")
         kRecruitment = std::stod(value);
 
+    else if (key == "dip_ext_init")
+        kDipExtInit = std::stod(value);
+
+    else if (key == "dip_ext_time")
+        kDipExtTime = std::stod(value);
+
     else if (key == "global_epithelial_division") 
         kGlobalEpithelialDivision = std::stoi(value);
 
@@ -135,6 +145,8 @@ void parse_config() {
     kCoExpressDelay *= kFlowRate;
     kDivisionTime *= kFlowRate;
 
+    kDipExtTime *= kFlowRate;
+
     kTotalEpithelialCells = kGridWidth * kGridHeight;
     kBaseImmCell *= kTotalEpithelialCells;
     kSimulationLength *= kFlowRate;
@@ -163,6 +175,8 @@ void print_config() {
     printf("- Base immune cells: %f\n", kBaseImmCell);
     printf("- Recruit delay: %f\n", kRecruitDelay);
     printf("- Recruitment: %f\n", kRecruitment);
+    printf("- DIP external init: %f\n", kDipExtInit);
+    printf("- DIP external time: %f\n", kDipExtTime);
     printf("- Global epithelial cell division: %d\n", kGlobalEpithelialDivision);
     printf("- Simulation length: %dh\n", kSimulationLength);
     printf("- Number of simulations: %d\n", kNumSimulations);

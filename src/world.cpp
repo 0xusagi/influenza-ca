@@ -93,10 +93,14 @@ void World::Simulate(FILE* fp) {
 
     // start simulation
     for (int t = 0; t < kSimulationLength; t++) {
+        // if it is time for introduction of extra DIPs, then add
+        if (t == kDipExtTime) {
+            AddExtDip();
+        }
+
         // flip counts
         prev_counts = counts;
         counts = {0};
-
 
         // epithelial cells
         UpdateEpithelialCells();
@@ -225,6 +229,25 @@ void World::PrintTimeStepToFile(FILE* fp) {
     double p_immune = 1.0 * counts.immune / kTotalEpithelialCells;
 
     fprintf(fp, "%f,%f,%f,%f,%f,%f\n", p_healthy, p_stv_infected, p_dip_infected, p_co_infected, p_dead, p_immune);
+}
+
+void World::AddExtDip() {
+    int dip_count = kTotalEpithelialCells * kDipExtInit;
+
+    for (int i = 0; i < dip_count; i++) {
+        int x = RandomX();
+        int y = RandomY();
+
+        EpithelialState state = epithelial_cells[x][y]->state;
+        
+        // change the state (only needed for healthy and stv-infected cells)
+        if (state == EpithelialState::HEALTHY) {
+            epithelial_cells[x][y]->state = EpithelialState::D_INFECTED;
+        }
+        else if (state == EpithelialState::S_INFECTED) {
+            epithelial_cells[x][y]->state = EpithelialState::C_INFECTED;
+        }
+    }
 }
 
 int World::RandomX() {
