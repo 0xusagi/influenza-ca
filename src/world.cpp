@@ -7,7 +7,7 @@
 
 #include <math.h>
 
-World::World() 
+World::World(FILE* fp) 
     : prev_counts{0}
     , counts{0} 
     , base_recruitment_immune_cells(floor(kRecruitment))
@@ -73,6 +73,9 @@ World::World()
 
         counts.immune++;
     }
+
+    // print the initial conditions to file
+    PrintTimeStepToFile(fp);
 }
 
 World::~World() {
@@ -88,31 +91,19 @@ World::~World() {
     delete epithelial_cells;
 }
 
-void World::Simulate(FILE* fp, Window& window) {
-    // print the initial conditions to file
-    // clear window screen and draw the first timestep
+void World::Step(FILE* fp) {
+    // flip counts
+    prev_counts = counts;
+    counts = {0};
+
+    // epithelial cells
+    UpdateEpithelialCells();
+
+    // immune cells
+    UpdateImmuneCells();
+
+    // print the counts
     PrintTimeStepToFile(fp);
-    ClearAndDrawToScreen(window);
-
-    // start simulation
-    for (int t = 0; t < kSimulationLength; t++) {
-        // flip counts
-        prev_counts = counts;
-        counts = {0};
-
-
-        // epithelial cells
-        UpdateEpithelialCells();
-
-        // immune cells
-        UpdateImmuneCells();
-
-        // print the counts
-        PrintTimeStepToFile(fp);
-
-        // clear the window screen and draw the first timestep
-        ClearAndDrawToScreen(window);
-    }
 }
 
 void World::UpdateEpithelialCells() {
@@ -208,11 +199,6 @@ void World::PrintTimeStepToFile(FILE* fp) {
     double p_immune = 1.0 * counts.immune / kTotalEpithelialCells;
 
     fprintf(fp, "%f,%f,%f,%f\n", p_healthy, p_infected, p_dead, p_immune);
-}
-
-void World::ClearAndDrawToScreen(Window& window) {
-    window.ClearScreen();
-    window.Draw(*this);
 }
 
 int World::RandomX() {

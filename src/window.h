@@ -18,10 +18,10 @@ public:
     Window(int on);
     ~Window();
 
-    void ClearScreen();
     void Draw(World& world);
 
 private:
+    void ClearScreen();
 };
 
 #endif

@@ -26,10 +26,10 @@ public:
     EpithelialCell*** epithelial_cells; 
     std::vector<ImmuneCell> immune_cells;
 
-    World();
+    World(FILE* fp);
     ~World();
 
-    void Simulate(FILE* fp, Window& window);
+    void Step(FILE* fp);
 
     // immune cell recognition event
     void MatureImmuneCellRecognitionEvent(int x, int y);

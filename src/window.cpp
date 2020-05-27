@@ -62,5 +62,8 @@ void Window::ClearScreen() {
 }
 
 void Window::Draw(World& world) {
+    // clear the screen first
+    ClearScreen();
+
     // draw epithelial cells and immune cells to the screen
 }
