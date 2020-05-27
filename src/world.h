@@ -7,6 +7,7 @@
 
 class EpithelialCell;
 class ImmuneCell;
+class Window;
 
 typedef struct {
     int healthy;
@@ -28,7 +29,7 @@ public:
     World();
     ~World();
 
-    void Simulate(FILE* fp);
+    void Simulate(FILE* fp, Window& window);
 
     // immune cell recognition event
     void MatureImmuneCellRecognitionEvent(int x, int y);
@@ -39,6 +40,9 @@ private:
     void UpdateImmuneCells();
 
     void PrintTimeStepToFile(FILE* fp);
+
+    // graphics
+    void ClearAndDrawToScreen(Window& window);
 
     std::uniform_int_distribution<int> x_distribution;
     int RandomX();

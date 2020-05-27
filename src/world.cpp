@@ -2,6 +2,7 @@
 #include "epithelial_cell.h"
 #include "immune_cell.h"
 #include "utils.h"
+#include "window.h"
 #include "world.h"
 
 #include <math.h>
@@ -87,9 +88,11 @@ World::~World() {
     delete epithelial_cells;
 }
 
-void World::Simulate(FILE* fp) {
+void World::Simulate(FILE* fp, Window& window) {
     // print the initial conditions to file
+    // clear window screen and draw the first timestep
     PrintTimeStepToFile(fp);
+    ClearAndDrawToScreen(window);
 
     // start simulation
     for (int t = 0; t < kSimulationLength; t++) {
@@ -106,6 +109,9 @@ void World::Simulate(FILE* fp) {
 
         // print the counts
         PrintTimeStepToFile(fp);
+
+        // clear the window screen and draw the first timestep
+        ClearAndDrawToScreen(window);
     }
 }
 
@@ -202,6 +208,11 @@ void World::PrintTimeStepToFile(FILE* fp) {
     double p_immune = 1.0 * counts.immune / kTotalEpithelialCells;
 
     fprintf(fp, "%f,%f,%f,%f\n", p_healthy, p_infected, p_dead, p_immune);
+}
+
+void World::ClearAndDrawToScreen(Window& window) {
+    window.ClearScreen();
+    window.Draw(*this);
 }
 
 int World::RandomX() {

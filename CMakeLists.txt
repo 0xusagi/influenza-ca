@@ -17,6 +17,7 @@ set (src
         src/immune_cell.cpp 
         src/main.cpp 
         src/utils.cpp 
+        src/window.cpp 
         src/world.cpp)
 
 add_executable(simulation ${src})

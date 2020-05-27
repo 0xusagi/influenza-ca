@@ -1,8 +1,9 @@
 #include "config.h"
+#include "window.h"
 #include "world.h"
 #include "utils.h"
 
-void run_simulations(struct cmd_opts options) {
+void run_simulations(struct cmd_opts options, Window& window) {
     FILE* fp;
     fp = fopen(options.output_filename, "w");
 
@@ -16,7 +17,7 @@ void run_simulations(struct cmd_opts options) {
         World world = World();
 
         printf("Starting simulation...\n");
-        world.Simulate(fp);
+        world.Simulate(fp, window);
     }
 
     fclose(fp);
@@ -30,7 +31,10 @@ int main(int argc, char *argv[]) {
     printf("Parsing config...\n");
     parse_config();
 
-    run_simulations(options);
+    // create the window for graphics
+    Window window(options.graphics);
+
+    run_simulations(options, window);
 
     return 0;
 }
