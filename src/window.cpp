@@ -16,12 +16,6 @@ Window::Window(int on)
         return;
     }
 
-    // init SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        SDL_Log("Unable to initialise SDL: %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
     // create window
     printf("Creating window...\n");
     window = SDL_CreateWindow(

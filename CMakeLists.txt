@@ -15,6 +15,7 @@ set (src
         src/config.cpp 
         src/epithelial_cell.cpp 
         src/immune_cell.cpp 
+        src/input.cpp 
         src/main.cpp 
         src/utils.cpp 
         src/window.cpp 
