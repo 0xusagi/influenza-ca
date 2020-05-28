@@ -7,8 +7,8 @@
 #include "window.h"
 
 // cell width and height in pixels
-int kCellWidthPixels = 4; 
-int kCellHeightPixels = 4;
+int kCellWidthPixels = 16; 
+int kCellHeightPixels = 16;
 
 ViewportGrid::ViewportGrid(Window& window, int viewport_width, int viewport_height) 
     : viewport_rect{0, 0, viewport_width, viewport_height} 
@@ -48,7 +48,7 @@ ViewportGrid::~ViewportGrid() {
 }
 
 void ViewportGrid::LoadImages(Window& window) {
-    SDL_Surface* loaded_surface = IMG_Load("images/immune_cell.png");
+    SDL_Surface* loaded_surface = IMG_Load("../images/immune_cell.png");
     if (loaded_surface == NULL) {
         SDL_Log("Unable to load immune cell image: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
@@ -66,8 +66,11 @@ void ViewportGrid::LoadImages(Window& window) {
 }
 
 void ViewportGrid::Draw(World& world) {
-    for (int x = x0; x < max_x; x++) {
-        for (int y = y0; y < max_y; y++) {
+    for (int i = 0; i < max_x; i++) {
+        for (int j = 0; j < max_y; j++) {
+            int x = i + x0;
+            int y = j + y0;
+
             SDL_Rect* fill_rect = CreateCellRect(x, y);
 
             // pick the color
@@ -98,4 +101,14 @@ void ViewportGrid::Draw(World& world) {
             delete fill_rect;
         }
     }
+}
+
+SDL_Rect* ViewportGrid::CreateCellRect(int x, int y) {
+    SDL_Rect* rect = new SDL_Rect();
+    rect->x = (x - x0) * kCellWidthPixels;
+    rect->y = (y - y0) * kCellHeightPixels;
+    rect->w = kCellWidthPixels;
+    rect->h = kCellHeightPixels;
+
+    return rect;
 }

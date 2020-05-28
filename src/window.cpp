@@ -1,11 +1,16 @@
 #include <SDL.h>
 #include <cstdlib>
 
+#include "viewport_grid.h"
 #include "window.h"
 #include "world.h"
 
 int kDefaultWindowWidth = 1200;
 int kDefaultWindowHeight = 900;
+
+int kViewportGridRatio = 3;
+int kViewportInfoRatio = 1;
+int kTotalRatio = kViewportGridRatio + kViewportInfoRatio;
 
 Window::Window(int on) 
     : on(on)
@@ -36,6 +41,11 @@ Window::Window(int on)
         SDL_Log("Unable to create renderer SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
+
+    // create viewports
+    int viewport_grid_width = width * kViewportGridRatio / kTotalRatio;
+    int viewport_grid_height = height;
+    viewport_grid = new ViewportGrid(*this, viewport_grid_width, viewport_grid_height);
 }
 
 Window::~Window() {
@@ -44,6 +54,9 @@ Window::~Window() {
         SDL_DestroyRenderer(renderer);
 
         SDL_Quit();
+
+        // destroy viewports
+        delete viewport_grid;
     }
 }
 
@@ -59,5 +72,9 @@ void Window::Draw(World& world) {
     // clear the screen first
     ClearScreen();
 
-    // draw epithelial cells and immune cells to the screen
+    // draw epithelial cells and immune cells to buffer
+    viewport_grid->Draw(world);
+
+    // draw to the screen
+    SDL_RenderPresent(renderer);
 }
