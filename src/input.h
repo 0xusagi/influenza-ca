@@ -9,6 +9,7 @@ public:
     std::map<SDL_Keycode, bool> keymap;
 
     bool quit;
+    bool paused;
 
     Input();
 

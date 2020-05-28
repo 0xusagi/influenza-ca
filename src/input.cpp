@@ -20,6 +20,12 @@ void Input::Poll() {
             if (event.key.keysym.sym == SDLK_ESCAPE) {
                 quit = true;
             }
+
+            // pause
+            bool space_pressed = keymap[SDLK_SPACE];
+            if (space_pressed) {
+                paused = !paused;
+            }
         }
         
         else if (event.type == SDL_KEYUP) {

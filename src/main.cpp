@@ -34,6 +34,13 @@ int main(int argc, char *argv[]) {
         // poll for input
         input.Poll();
 
+        // paused
+        if (input.paused) {
+            t--;
+            continue;
+        }
+
+        // update step
         world.Step(fp);
         window.Draw(world);
     }
