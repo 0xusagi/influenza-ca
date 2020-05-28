@@ -5,6 +5,7 @@
 
 class World;
 class ViewportGrid;
+class ViewportInfo;
 
 class Window {
 public:
@@ -12,6 +13,7 @@ public:
     SDL_Renderer* renderer;
 
     ViewportGrid* viewport_grid;
+    ViewportInfo* viewport_info;
 
     int on; // flag whether graphics is turned on 
 

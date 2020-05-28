@@ -2,6 +2,7 @@
 
 #include "config.h"
 #include "epithelial_cell.h"
+#include "immune_cell.h"
 #include "viewport_grid.h"
 #include "world.h"
 #include "window.h"
@@ -11,17 +12,16 @@ int kCellWidthPixels = 16;
 int kCellHeightPixels = 16;
 
 ViewportGrid::ViewportGrid(Window& window, int viewport_width, int viewport_height) 
-    : viewport_rect{0, 0, viewport_width, viewport_height} 
-    , renderer(window.renderer){
+    : renderer(window.renderer) {
 
-    // init SDL Image
-    if (!IMG_Init(IMG_INIT_PNG)) {
-        SDL_Log("Unable to initialise SDL image: %s\n", IMG_GetError());
-        exit(EXIT_FAILURE);
-    }
+    // create the viewport rectangle 
+    viewport_rect.x = 0;
+    viewport_rect.y = 0;
+    viewport_rect.w = viewport_width;
+    viewport_rect.h = viewport_height;
     
     // load images
-    LoadImages(window);
+    LoadImages();
 
     // calculate the number of cells which can be fit
     max_x = viewport_rect.w / kCellWidthPixels;
@@ -43,18 +43,16 @@ ViewportGrid::ViewportGrid(Window& window, int viewport_width, int viewport_heig
 
 ViewportGrid::~ViewportGrid() {
     SDL_DestroyTexture(immune_cell_img);
-
-    IMG_Quit();
 }
 
-void ViewportGrid::LoadImages(Window& window) {
+void ViewportGrid::LoadImages() {
     SDL_Surface* loaded_surface = IMG_Load("../images/immune_cell.png");
     if (loaded_surface == NULL) {
         SDL_Log("Unable to load immune cell image: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
     else {
-        immune_cell_img = SDL_CreateTextureFromSurface(window.renderer, loaded_surface);
+        immune_cell_img = SDL_CreateTextureFromSurface(renderer, loaded_surface);
         if (immune_cell_img == NULL) {
             SDL_Log("Unable to create immune cell texture from image: %s\n", SDL_GetError());
             exit(EXIT_FAILURE);
@@ -71,7 +69,8 @@ void ViewportGrid::Draw(World& world) {
             int x = i + x0;
             int y = j + y0;
 
-            SDL_Rect* fill_rect = CreateCellRect(x, y);
+            SDL_Rect fill_rect;
+            AssignToCellRect(x, y, &fill_rect);
 
             // pick the color
             EpithelialState state = world.epithelial_cells[x][y]->state;
@@ -95,20 +94,24 @@ void ViewportGrid::Draw(World& world) {
             // draw the color and rectangle to screen
             SDL_RenderSetViewport(renderer, &viewport_rect);
             SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-            SDL_RenderFillRect(renderer, fill_rect);
+            SDL_RenderFillRect(renderer, &fill_rect);
+        }
+    }
 
-            // delete the fill rect
-            delete fill_rect;
+    for (ImmuneCell cell : world.immune_cells) {
+        if ((cell.x >= x0 || cell.x < max_x) && (cell.y >= y0 || cell.y < max_y)) {
+            SDL_Rect fill_rect;
+            AssignToCellRect(cell.x, cell.y, &fill_rect);
+
+            // render the immune cell
+            SDL_RenderCopy(renderer, immune_cell_img, NULL, &fill_rect);
         }
     }
 }
 
-SDL_Rect* ViewportGrid::CreateCellRect(int x, int y) {
-    SDL_Rect* rect = new SDL_Rect();
+void ViewportGrid::AssignToCellRect(int x, int y, SDL_Rect* rect) {
     rect->x = (x - x0) * kCellWidthPixels;
     rect->y = (y - y0) * kCellHeightPixels;
     rect->w = kCellWidthPixels;
     rect->h = kCellHeightPixels;
-
-    return rect;
 }

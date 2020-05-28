@@ -35,9 +35,9 @@ private:
 
     SDL_Renderer* renderer;
 
-    void LoadImages(Window& window);
+    void LoadImages();
 
-    SDL_Rect* CreateCellRect(int x, int y);
+    void AssignToCellRect(int x, int y, SDL_Rect* rect);
 };
 
 #endif

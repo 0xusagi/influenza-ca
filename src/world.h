@@ -20,6 +20,7 @@ class World {
 public:
     counts_t prev_counts;
     counts_t counts;
+    int timestep;
     int immune_cells_to_be_added;
     int base_recruitment_immune_cells;
     double recruitment_probability;

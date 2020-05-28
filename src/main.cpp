@@ -4,33 +4,22 @@
 #include "world.h"
 #include "utils.h"
 
-void init() {
-    // init SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        SDL_Log("Unable to initialise SDL: %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    // parse config
-    printf("Parsing config...\n");
-    parse_config();
-}
-
 int main(int argc, char *argv[]) {
     // parse cmd line options
     struct cmd_opts options = parse_cmd_opts(argc, argv);
 
-    // initialise everything
-    init();
+    // parse config
+    printf("Parsing config...\n");
+    parse_config();
+
+    FILE* fp;
+    fp = fopen(options.output_filename, "w");
 
     // create the window for graphics
     Window window(options.graphics);
 
     // create input
     Input input;
-
-    FILE* fp;
-    fp = fopen(options.output_filename, "w");
 
     // print the headers
     fprintf(fp, "healthy,infected,dead,immune\n");

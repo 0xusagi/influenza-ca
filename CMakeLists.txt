@@ -18,6 +18,7 @@ set (src
         src/input.cpp 
         src/main.cpp 
         src/utils.cpp 
+        src/viewport_info.cpp 
         src/viewport_grid.cpp 
         src/window.cpp 
         src/world.cpp)

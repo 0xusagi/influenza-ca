@@ -10,6 +10,7 @@
 World::World(FILE* fp) 
     : prev_counts{0}
     , counts{0} 
+    , timestep(0)
     , base_recruitment_immune_cells(floor(kRecruitment))
     , recruitment_probability(kRecruitment - base_recruitment_immune_cells)
     , x_distribution(0, kGridWidth - 1) 
@@ -92,6 +93,9 @@ World::~World() {
 }
 
 void World::Step(FILE* fp) {
+    // add to the timestep
+    timestep++;
+
     // flip counts
     prev_counts = counts;
     counts = {0};
