@@ -15,6 +15,11 @@ public:
 
     void Draw(World& world);
 
+    void RepositionDown();
+    void RepositionUp();
+    void RepositionLeft();
+    void RepositionRight();
+
 private:
     // current index of the grid
     int x0;

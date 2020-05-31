@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 #include <cstdlib>
 
+#include "input.h"
 #include "viewport_info.h"
 #include "viewport_grid.h"
 #include "window.h"
@@ -113,4 +114,32 @@ void Window::Draw(World& world) {
 
     // draw to the screen
     SDL_RenderPresent(renderer);
+}
+
+int Window::Move(Input& input) {
+    int moved = 0;
+
+    // any movement is related to the grid viewport
+    // move down
+    if (input.IsDown(Keyboard::Down)) {
+        viewport_grid->RepositionDown();
+        moved = 1;
+    }
+    // move left
+    if (input.IsDown(Keyboard::Left)) {
+        viewport_grid->RepositionLeft();
+        moved = 1;
+    }
+    // move up
+    if (input.IsDown(Keyboard::Up)) {
+        viewport_grid->RepositionUp();
+        moved = 1;
+    }
+    // move right
+    if (input.IsDown(Keyboard::Right)) {
+        viewport_grid->RepositionRight();
+        moved = 1;
+    }
+
+    return moved;
 }

@@ -109,6 +109,30 @@ void ViewportGrid::Draw(World& world) {
     }
 }
 
+void ViewportGrid::RepositionDown() {
+    if (y0 < kGridHeight - 2 - max_y) {
+        y0++;
+    }
+}
+
+void ViewportGrid::RepositionUp() {
+    if (y0 > 0) {
+        y0--;
+    }
+}
+
+void ViewportGrid::RepositionLeft() {
+    if (x0 > 0) {
+        x0--;
+    }
+}
+
+void ViewportGrid::RepositionRight() {
+    if (x0 < kGridWidth - 2 - max_x) {
+        x0++;
+    }
+}
+
 void ViewportGrid::AssignToCellRect(int x, int y, SDL_Rect* rect) {
     rect->x = (x - x0) * kCellWidthPixels;
     rect->y = (y - y0) * kCellHeightPixels;

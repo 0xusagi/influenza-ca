@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 
+class Input;
 class World;
 class ViewportGrid;
 class ViewportInfo;
@@ -24,6 +25,8 @@ public:
     ~Window();
 
     void Draw(World& world);
+
+    int Move(Input& input);
 
 private:
     void ClearScreen();

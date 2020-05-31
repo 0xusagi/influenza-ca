@@ -2,6 +2,7 @@
 
 Input::Input() {
     quit = false;
+    paused = false;
 }
 
 void Input::Poll() {
@@ -32,4 +33,12 @@ void Input::Poll() {
             keymap[event.key.keysym.sym] = false;
        }
     }
+}
+
+int Input::IsDown(Keyboard key) {
+    return keymap[static_cast<SDL_Keycode>(key)];
+}
+
+int Input::IsUp(Keyboard key) {
+    return !keymap[static_cast<SDL_Keycode>(key)];
 }

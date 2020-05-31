@@ -36,10 +36,19 @@ int main(int argc, char *argv[]) {
 
         // paused
         if (input.paused) {
-            t--;
-            continue;
-        }
+            // if n is pressed, we move to the next step 
+            // otherwise, we are still paused
+            if (!input.IsDown(Keyboard::n)) {
+                t--;
 
+                // check if screen moved
+                if (window.Move(input)) {
+                    window.Draw(world);
+                }
+
+                continue;
+            }
+        }
         // update step
         world.Step(fp);
         window.Draw(world);
