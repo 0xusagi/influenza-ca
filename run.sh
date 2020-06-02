@@ -1,21 +1,53 @@
 #!/bin/bash
 
-# number of simulations to run
-n_simulations=$1
+usage() {
+    echo "Usage: $0 [-ng]" 1>&2;
+    exit 1;
+}
+
+# get arguments additional arguments
+args=""
+while getopts "gn:" arg; do
+    case $arg in
+        n)
+            n=${OPTARG}
+            ;;
+        g) 
+            args="${args} -g"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+# check if value exists
+if [ -z "${n}" ]; then
+    usage
+fi
 
 all_out_names=""
 
+echo $args
+
+declare -i i
 i=1
-while [ $i -le $n_simulations ]
+while [ $i -le $n ]
 do
-    out_name="out${i}.csv"
+    outname="out${i}.csv"
 
     # run the simulation
+    ./build/simulation -f $outname $args
 
-    all_out_names="${all_out_names} ${out_name}"
-    true $(( i++ ))
+    if [ $? -ne "0" ]; then
+        exit 1
+    fi
+
+    all_outnames="${all_outnames} ${outname}"
+    i+=1
 done
 
 echo $all_out_names
 
 # plot the graph
+

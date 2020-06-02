@@ -4,3 +4,4 @@ build/.*.png
 env/
 .DS_Store
 build/
+*.conf

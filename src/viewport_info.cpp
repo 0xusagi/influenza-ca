@@ -135,7 +135,7 @@ void ViewportInfo::Draw(World& world) {
 
 void ViewportInfo::LoadFonts() {
     // load font
-    font = TTF_OpenFont("../fonts/calibri.ttf", 14);
+    font = TTF_OpenFont("fonts/calibri.ttf", 14);
     if (font == NULL) {
         SDL_Log("Failed to load calibri font: %s\n", TTF_GetError());
         exit(EXIT_FAILURE);

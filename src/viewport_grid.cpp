@@ -50,7 +50,7 @@ ViewportGrid::~ViewportGrid() {
 }
 
 void ViewportGrid::LoadImages() {
-    SDL_Surface* loaded_surface = IMG_Load("../images/immune_cell.png");
+    SDL_Surface* loaded_surface = IMG_Load("images/immune_cell.png");
     if (loaded_surface == NULL) {
         SDL_Log("Unable to load immune cell image: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
@@ -69,7 +69,7 @@ void ViewportGrid::LoadImages() {
 
 void ViewportGrid::LoadFonts() {
     // Load font
-    font = TTF_OpenFont("../fonts/calibri.ttf", 12);
+    font = TTF_OpenFont("fonts/calibri.ttf", 12);
     if (font == NULL) {
         SDL_Log("Failed to load calibri font: %s\n", TTF_GetError());
         exit(EXIT_FAILURE);
