@@ -56,5 +56,11 @@ int main(int argc, char *argv[]) {
 
     fclose(fp);
 
-    return 0;
+    // return 1 if quit with in the middle else 0
+    if (input.quit) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
