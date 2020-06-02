@@ -1,27 +1,9 @@
 
 #include "config.h"
+#include "input.h"
+#include "window.h"
 #include "world.h"
 #include "utils.h"
-
-void run_simulations(struct cmd_opts options) {
-    FILE* fp;
-    fp = fopen(options.output_filename, "w");
-
-    for (int t = 1; t <= kNumSimulations; t++) {
-        printf("Simulation for round %d\n", t);
-
-        // print the headers
-        fprintf(fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
-
-        printf("Initialising...\n");
-        World world = World();
-
-        printf("Starting simulation...\n");
-        world.Simulate(fp);
-    }
-
-    fclose(fp);
-}
 
 int main(int argc, char *argv[]) {
     // parse cmd line options
@@ -31,10 +13,58 @@ int main(int argc, char *argv[]) {
     printf("Parsing config...\n");
     parse_config();
 
-    run_simulations(options);
+    FILE* fp;
+    fp = fopen(options.output_filename, "w");
 
-    // call python script to plot results on graph
-    plot_graph(options);
+    // create the window for graphics
+    Window window(options.graphics);
 
-    return 0;
+    // print the headers
+    fprintf(fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
+
+    // create input
+    Input input;
+
+    // print the headers
+    fprintf(fp, "healthy,infected,dead,immune\n");
+
+    printf("Initialising...\n");
+    World world = World(fp);
+    window.Draw(world);
+
+    printf("Starting simulation...\n");
+    // start simulation
+    for (int t = 0; t < kSimulationLength && !input.quit; t++) {
+        // poll for input
+        input.Poll();
+
+        // paused
+        if (input.paused) {
+            // if n is pressed, we move to the next step 
+            // otherwise, we are still paused
+            if (!input.IsDown(Keyboard::n)) {
+                t--;
+
+                // check if screen moved
+                if (window.Move(input)) {
+                    window.Draw(world);
+                }
+
+                continue;
+            }
+        }
+        // update step
+        world.Step(fp);
+        window.Draw(world);
+    }
+
+    fclose(fp);
+
+    // return 1 if quit with in the middle else 0
+    if (input.quit) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }

@@ -15,8 +15,13 @@ set (src
         src/config.cpp 
         src/epithelial_cell.cpp 
         src/immune_cell.cpp 
+        src/input.cpp 
+        src/graphics.cpp 
         src/main.cpp 
         src/utils.cpp 
+        src/viewport_info.cpp 
+        src/viewport_grid.cpp 
+        src/window.cpp 
         src/world.cpp)
 
 add_executable(simulation ${src})
