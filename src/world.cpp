@@ -2,13 +2,15 @@
 #include "epithelial_cell.h"
 #include "immune_cell.h"
 #include "utils.h"
+#include "window.h"
 #include "world.h"
 
 #include <math.h>
 
-World::World() 
+World::World(FILE* fp) 
     : prev_counts{0}
     , counts{0} 
+    , timestep(0)
     , base_recruitment_immune_cells(floor(kRecruitment))
     , recruitment_probability(kRecruitment - base_recruitment_immune_cells)
     , x_distribution(0, kGridWidth - 1) 
@@ -72,6 +74,9 @@ World::World()
 
         counts.immune++;
     }
+
+    // print the initial conditions to file
+    PrintTimeStepToFile(fp);
 }
 
 World::~World() {
@@ -87,26 +92,22 @@ World::~World() {
     delete epithelial_cells;
 }
 
-void World::Simulate(FILE* fp) {
-    // print the initial conditions to file
+void World::Step(FILE* fp) {
+    // add to the timestep
+    timestep++;
+
+    // flip counts
+    prev_counts = counts;
+    counts = {0};
+
+    // epithelial cells
+    UpdateEpithelialCells();
+
+    // immune cells
+    UpdateImmuneCells();
+
+    // print the counts
     PrintTimeStepToFile(fp);
-
-    // start simulation
-    for (int t = 0; t < kSimulationLength; t++) {
-        // flip counts
-        prev_counts = counts;
-        counts = {0};
-
-
-        // epithelial cells
-        UpdateEpithelialCells();
-
-        // immune cells
-        UpdateImmuneCells();
-
-        // print the counts
-        PrintTimeStepToFile(fp);
-    }
 }
 
 void World::UpdateEpithelialCells() {
