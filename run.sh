@@ -5,6 +5,12 @@ usage() {
     exit 1;
 }
 
+# create out directory if not exists
+out_dir="out"
+if [ ! -e $out_dir ]; then
+    mkdir $out_dir
+fi
+
 # get arguments additional arguments
 args=""
 while getopts "gn:" arg; do
@@ -28,13 +34,12 @@ fi
 
 all_out_names=""
 
-echo $args
 
 declare -i i
 i=1
 while [ $i -le $n ]
 do
-    outname="out${i}.csv"
+    outname="${out_dir}/out${i}.csv"
 
     # run the simulation
     ./build/simulation -f $outname $args
@@ -47,7 +52,6 @@ do
     i+=1
 done
 
-echo $all_out_names
 
 # plot the graph
-
+python3 graph/graph.py $all_outnames

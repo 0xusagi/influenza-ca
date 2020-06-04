@@ -29,7 +29,6 @@ extern double kDipExtTime;
 
 extern double kTotalEpithelialCells;
 extern int kSimulationLength;
-extern int kNumSimulations;
 
 void parse_config();
 void print_config();

@@ -33,7 +33,6 @@ double kDipExtTime;
 
 int kGlobalEpithelialDivision;
 int kSimulationLength;
-int kNumSimulations;
 
 void store_line(std::string key, std::string value) {
     if (key == "grid_width")
@@ -110,9 +109,6 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "simulation_hours")
         kSimulationLength = std::stod(value);
-    
-    else if (key == "num_simulations") 
-        kNumSimulations = std::stoi(value);
 }
 
 void parse_config() {
@@ -179,5 +175,4 @@ void print_config() {
     printf("- DIP external time: %f\n", kDipExtTime);
     printf("- Global epithelial cell division: %d\n", kGlobalEpithelialDivision);
     printf("- Simulation length: %dh\n", kSimulationLength);
-    printf("- Number of simulations: %d\n", kNumSimulations);
 }

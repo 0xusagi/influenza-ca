@@ -9,23 +9,47 @@ def plot():
 
 # Run as main and read data from file
 if __name__ == "__main__":
+    n_files = len(sys.argv) - 1
+
     line_names = []
     data = {}
     line_count = 0
+
+    is_first = True
     # First line is the list of all headers
-    with open(sys.argv[1], "r") as f:
-        for line in f:
-            if line_count == 0:
-                line_names = line.split(',')
-                for name in line_names:
-                    data[name] = []
+    for i in range(n_files):
+        filename = sys.argv[i + 1]
+        with open(filename, "r") as f:
+            for line in f:
+                # First file to be read, so need to initialise
+                if is_first:
+                    if line_count == 0:
+                        line_names = line.split(',')
+                        for name in line_names:
+                            data[name] = []
 
-            else:
-                split_line = line.split(',')
-                for name, val in zip(line_names, split_line):
-                    data[name].append(float(val))
+                    else:
+                        split_line = line.split(',')
+                        for name, val in zip(line_names, split_line):
+                            data[name].append(float(val))
 
-            line_count += 1
+                else:
+                    if line_count == 0:
+                        line_names = line.split(',')
+
+                    else:
+                        split_line = line.split(',')
+                        col = 0
+                        for name, val in zip(line_names, split_line):
+                            data[name][col] += float(val)
+                            col += 1
+
+                line_count += 1
+
+    # average the values
+    for name in data:
+        for i in range(len(data[name])):
+            data[name][i] /= n_files
 
     t = line_count - 1
     x = np.arange(t)

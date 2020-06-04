@@ -25,9 +25,6 @@ int main(int argc, char *argv[]) {
     // create input
     Input input;
 
-    // print the headers
-    fprintf(fp, "healthy,infected,dead,immune\n");
-
     printf("Initialising...\n");
     World world = World(fp);
     window.Draw(world);
