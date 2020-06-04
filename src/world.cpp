@@ -93,6 +93,11 @@ World::~World() {
 }
 
 void World::Step(FILE* fp) {
+    // add if time for introduction fo extra DIPs
+    if (timestep == kDipExtTime) {
+        AddExtDip();
+    }
+
     // add to the timestep
     timestep++;
 
