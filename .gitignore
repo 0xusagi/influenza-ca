@@ -4,3 +4,5 @@ build/.*.png
 env/
 .DS_Store
 build/
+influenza.png
+*.conf

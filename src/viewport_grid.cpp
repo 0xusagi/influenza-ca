@@ -3,6 +3,7 @@
 #include "config.h"
 #include "epithelial_cell.h"
 #include "immune_cell.h"
+#include "graphics.h"
 #include "viewport_grid.h"
 #include "world.h"
 #include "window.h"
@@ -39,6 +40,9 @@ ViewportGrid::ViewportGrid(Window& window, int viewport_width, int viewport_heig
     epi_expressing_color = {0xFF, 0xD5, 0x00, 0xFF};
     epi_infectious_color = {0xFF, 0x00, 0x00, 0xFF};
     epi_dead_color = {0x00, 0x00, 0x00, 0xFF};
+
+    // Load fonts
+    LoadFonts();
 }
 
 ViewportGrid::~ViewportGrid() {
@@ -46,7 +50,7 @@ ViewportGrid::~ViewportGrid() {
 }
 
 void ViewportGrid::LoadImages() {
-    SDL_Surface* loaded_surface = IMG_Load("../images/immune_cell.png");
+    SDL_Surface* loaded_surface = IMG_Load("images/immune_cell.png");
     if (loaded_surface == NULL) {
         SDL_Log("Unable to load immune cell image: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
@@ -63,7 +67,24 @@ void ViewportGrid::LoadImages() {
     }
 }
 
+void ViewportGrid::LoadFonts() {
+    // Load font
+    font = TTF_OpenFont("fonts/calibri.ttf", 12);
+    if (font == NULL) {
+        SDL_Log("Failed to load calibri font: %s\n", TTF_GetError());
+        exit(EXIT_FAILURE);
+    }
+
+    // set font color to black
+    font_color.r = 0x00;
+    font_color.g = 0x00;
+    font_color.b = 0x00;
+    font_color.a = 0x00;
+}
+
 void ViewportGrid::Draw(World& world) {
+    SDL_RenderSetViewport(renderer, &viewport_rect);
+
     for (int i = 0; i < max_x; i++) {
         for (int j = 0; j < max_y; j++) {
             int x = i + x0;
@@ -78,13 +99,17 @@ void ViewportGrid::Draw(World& world) {
             if (state == EpithelialState::HEALTHY) {
                 color = epi_healthy_color;
             }
-            else if (state == EpithelialState::INFECTED) {
+            else if (state == EpithelialState::S_INFECTED ||
+                     state == EpithelialState::D_INFECTED || 
+                     state == EpithelialState::C_INFECTED) {
                 color = epi_infected_color;
             }
-            else if (state == EpithelialState::EXPRESSING) {
+            else if (state == EpithelialState::S_EXPRESSING || 
+                     state == EpithelialState::C_EXPRESSING) {
                 color = epi_expressing_color;
             }
-            else if (state == EpithelialState::INFECTIOUS) {
+            else if (state == EpithelialState::S_INFECTIOUS || 
+                     state == EpithelialState::C_INFECTIOUS) {
                 color = epi_infectious_color;
             }
             else if (state == EpithelialState::DEAD) {
@@ -92,9 +117,43 @@ void ViewportGrid::Draw(World& world) {
             }
 
             // draw the color and rectangle to screen
-            SDL_RenderSetViewport(renderer, &viewport_rect);
             SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
             SDL_RenderFillRect(renderer, &fill_rect);
+
+            int dip = 0;
+            int stv = 0;
+
+            if (state == EpithelialState::S_INFECTED ||
+                state == EpithelialState::S_EXPRESSING || 
+                state == EpithelialState::S_INFECTIOUS) {
+                stv = 1;
+            }
+            else if (state == EpithelialState::D_INFECTED) {
+                dip = 1;
+            }
+            else if (state == EpithelialState::C_INFECTED || 
+                     state == EpithelialState::C_EXPRESSING || 
+                     state == EpithelialState::C_INFECTIOUS) {
+                stv = 1;
+                dip = 1;
+            }
+
+            // write the flag for dip and stv particles 
+            // stv
+            SDL_Rect dest;
+            dest.x = fill_rect.x + fill_rect_margin;
+            dest.y = fill_rect.y + fill_rect_margin;
+            SDL_Texture* stv_count_texture;
+            CreateTextureFromText(renderer, std::to_string(stv), &stv_count_texture, &dest, font, font_color);
+            SDL_RenderCopy(renderer, stv_count_texture, NULL, &dest);
+            SDL_DestroyTexture(stv_count_texture);
+
+            // dip
+            dest.x += dest.w + fill_rect_margin;
+            SDL_Texture* dip_count_texture;
+            CreateTextureFromText(renderer, std::to_string(dip), &dip_count_texture, &dest, font, font_color);
+            SDL_RenderCopy(renderer, dip_count_texture, NULL, &dest);
+            SDL_DestroyTexture(dip_count_texture);
         }
     }
 

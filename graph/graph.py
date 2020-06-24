@@ -1,41 +1,67 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-from math import sqrt
 
-cell_names = ['healthy', 'infected', 'dead', 'immune']
-total_cells = int(sys.argv[2]) * int(sys.argv[3])
 
-# Read in the data from the file
-all_simulations = []
-with open(sys.argv[1], "r") as f:
-    for line in f:
-        line = line.rstrip('\n').split(',')
+def plot():
+    pass
 
-        # Here is a beginning of a new simulation
-        if len(line) == 1:
-            sim_dict = {}
-            for cell in cell_names:
-                sim_dict[cell] = []
-            all_simulations.append(sim_dict)
-        else:
-            all_simulations[-1]['healthy'].append(float(line[0]))
-            all_simulations[-1]['infected'].append(float(line[1]))
-            all_simulations[-1]['dead'].append(float(line[2]))
-            all_simulations[-1]['immune'].append(float(line[3]))
-            
-t = len(all_simulations[0]['healthy'])
-n_simulations = len(all_simulations)
 
-x = np.arange(t)
-x_ticks = np.arange(0, t, 24 * 6)
-y_ticks = np.arange(0.0, 1.1, 0.1)
-plt.xticks(x_ticks)
-plt.yticks(y_ticks)
+# Run as main and read data from file
+if __name__ == "__main__":
+    n_files = len(sys.argv) - 1
 
-plt.plot(x, all_simulations[0]['healthy'], '-b', label='healthy')
-plt.plot(x, all_simulations[0]['infected'], '-r', label='infected')
-plt.plot(x, all_simulations[0]['dead'], '-g', label='dead')
-plt.plot(x, all_simulations[0]['immune'], '-y', label='immune')
-plt.legend(loc='upper right')
-plt.savefig('influenza.png')
+    line_names = []
+    data = {}
+    line_count = 0
+
+    is_first = True
+    # First line is the list of all headers
+    for i in range(n_files):
+        filename = sys.argv[i + 1]
+        with open(filename, "r") as f:
+            for line in f:
+                # First file to be read, so need to initialise
+                if is_first:
+                    if line_count == 0:
+                        line_names = line.split(',')
+                        for name in line_names:
+                            data[name] = []
+
+                    else:
+                        split_line = line.split(',')
+                        for name, val in zip(line_names, split_line):
+                            data[name].append(float(val))
+
+                else:
+                    if line_count == 0:
+                        line_names = line.split(',')
+
+                    else:
+                        split_line = line.split(',')
+                        col = 0
+                        for name, val in zip(line_names, split_line):
+                            data[name][col] += float(val)
+                            col += 1
+
+                line_count += 1
+
+    # average the values
+    for name in data:
+        for i in range(len(data[name])):
+            data[name][i] /= n_files
+
+    t = line_count - 1
+    x = np.arange(t)
+    x_ticks = np.arange(0, t, 24 * 6)
+    x_labels = np.arange(0, t // (24 * 6) + 1)
+    plt.xticks(x_ticks, x_labels)
+
+    for key in data.keys():
+        plt.plot(x, data[key], label=key)
+
+    plt.legend(loc='upper right')
+    plt.xlabel('time (days)')
+    plt.ylabel('% total cells')
+
+    plt.savefig('influenza.png')

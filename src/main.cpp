@@ -1,3 +1,4 @@
+
 #include "config.h"
 #include "input.h"
 #include "window.h"
@@ -18,11 +19,11 @@ int main(int argc, char *argv[]) {
     // create the window for graphics
     Window window(options.graphics);
 
+    // print the headers
+    fprintf(fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
+
     // create input
     Input input;
-
-    // print the headers
-    fprintf(fp, "healthy,infected,dead,immune\n");
 
     printf("Initialising...\n");
     World world = World(fp);

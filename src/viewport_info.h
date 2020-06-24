@@ -26,13 +26,17 @@ private:
     SDL_Color font_color;
 
     SDL_Texture* text_healthy_texture;
-    SDL_Texture* text_infected_texture;
+    SDL_Texture* text_stv_infected_texture;
+    SDL_Texture* text_dip_infected_texture;
+    SDL_Texture* text_co_infected_texture;
     SDL_Texture* text_dead_texture;
     SDL_Texture* text_immune_texture;
     SDL_Texture* text_time_texture;
 
     SDL_Rect text_healthy_rect;
-    SDL_Rect text_infected_rect;
+    SDL_Rect text_stv_infected_rect;
+    SDL_Rect text_dip_infected_rect;
+    SDL_Rect text_co_infected_rect;
     SDL_Rect text_dead_rect;
     SDL_Rect text_immune_rect;
     SDL_Rect text_time_rect;
@@ -41,8 +45,6 @@ private:
 
     void LoadFonts();
     void CreateStaticTextures();
-
-    void CreateTextureFromText(std::string text, SDL_Texture** texture, SDL_Rect* rect);
 };
 
 #endif

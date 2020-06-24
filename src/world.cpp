@@ -27,19 +27,19 @@ World::World(FILE* fp)
         for (int y = 0; y < kGridHeight; y++) {
             int age = RandomEpithelialAge();
             int division_time = RandomDivisionTime();
-            epithelial_cells[x][y] = new EpithelialCell(x, y, age, 0, division_time, EpithelialState::HEALTHY);
+            epithelial_cells[x][y] = new EpithelialCell(x, y, age, 0, division_time);
         }
     }
 
     // initialise infected cells
-    printf("Initialising infected cells\n");
-    counts.infected = kTotalEpithelialCells * kInfectInit;
-    for (int i = 0; i < counts.infected; i++) {
+    printf("Initialising infected cells\n"); 
+    counts.s_infected = kTotalEpithelialCells * kStvInfectInit;
+    for (int i = 0; i < counts.s_infected; i++) {
         int x = RandomX();
         int y = RandomY();
 
         if (epithelial_cells[x][y]->state == EpithelialState::HEALTHY) {
-            epithelial_cells[x][y]->state = EpithelialState::INFECTED;
+            epithelial_cells[x][y]->state = EpithelialState::S_INFECTED;
         }
         else {
             i--;
@@ -62,7 +62,7 @@ World::World(FILE* fp)
     }
 
     // set the counts for healthy
-    counts.healthy = kTotalEpithelialCells - counts.infected - counts.dead;
+    counts.healthy = kTotalEpithelialCells - counts.s_infected - counts.dead;
 
     // initialise immune cells
     for (int i = 0; i < kBaseImmCell; i++) {
@@ -93,6 +93,11 @@ World::~World() {
 }
 
 void World::Step(FILE* fp) {
+    // add if time for introduction fo extra DIPs
+    if (timestep == kDipExtTime) {
+        AddExtDip();
+    }
+
     // add to the timestep
     timestep++;
 
@@ -131,8 +136,18 @@ void World::UpdateEpithelialCells() {
             else if (state == EpithelialState::DEAD) {
                 counts.dead++;
             }
-            else {
-                counts.infected++;
+            else if (state == EpithelialState::S_INFECTED ||
+                     state == EpithelialState::S_EXPRESSING || 
+                     state == EpithelialState::S_INFECTIOUS) {
+                counts.s_infected++;
+            }
+            else if (state == EpithelialState::D_INFECTED) {
+                counts.d_infected++;
+            }
+            else if (state == EpithelialState::C_INFECTED || 
+                     state == EpithelialState::C_EXPRESSING || 
+                     state == EpithelialState::C_INFECTIOUS) {
+                counts.c_infected++;
             }
         }
     }
@@ -180,9 +195,20 @@ void World::UpdateImmuneCells() {
 }
 
 void World::MatureImmuneCellRecognitionEvent(int x, int y) {
-    if (epithelial_cells[x][y]->state != EpithelialState::DEAD) {
+    EpithelialState epithelial_state = epithelial_cells[x][y]->state;
+    if (epithelial_state != EpithelialState::DEAD) {
         counts.dead++;
-        counts.infected--;
+
+        if (epithelial_state == EpithelialState::S_EXPRESSING || 
+            epithelial_state == EpithelialState::S_INFECTIOUS) {
+            counts.s_infected--;
+        }
+        else if (epithelial_state == EpithelialState::D_INFECTED) {
+            counts.d_infected--;
+        }
+        else {
+            counts.c_infected--;
+        }
         epithelial_cells[x][y]->state = EpithelialState::DEAD;
     }
 
@@ -198,11 +224,32 @@ void World::MatureImmuneCellRecognitionEvent(int x, int y) {
 
 void World::PrintTimeStepToFile(FILE* fp) {
     double p_healthy = 1.0 * counts.healthy / kTotalEpithelialCells;
-    double p_infected = 1.0 * counts.infected / kTotalEpithelialCells;
+    double p_stv_infected = 1.0 * counts.s_infected / kTotalEpithelialCells;
+    double p_dip_infected = 1.0 * counts.d_infected / kTotalEpithelialCells;
+    double p_co_infected = 1.0 * counts.c_infected / kTotalEpithelialCells;
     double p_dead = 1.0 * counts.dead / kTotalEpithelialCells;
     double p_immune = 1.0 * counts.immune / kTotalEpithelialCells;
 
-    fprintf(fp, "%f,%f,%f,%f\n", p_healthy, p_infected, p_dead, p_immune);
+    fprintf(fp, "%f,%f,%f,%f,%f,%f\n", p_healthy, p_stv_infected, p_dip_infected, p_co_infected, p_dead, p_immune);
+}
+
+void World::AddExtDip() {
+    int dip_count = kTotalEpithelialCells * kDipExtInit;
+
+    for (int i = 0; i < dip_count; i++) {
+        int x = RandomX();
+        int y = RandomY();
+
+        EpithelialState state = epithelial_cells[x][y]->state;
+        
+        // change the state (only needed for healthy and stv-infected cells)
+        if (state == EpithelialState::HEALTHY) {
+            epithelial_cells[x][y]->state = EpithelialState::D_INFECTED;
+        }
+        else if (state == EpithelialState::S_INFECTED) {
+            epithelial_cells[x][y]->state = EpithelialState::C_INFECTED;
+        }
+    }
 }
 
 int World::RandomX() {

@@ -2,6 +2,7 @@
 #define VIEWPORT_GRID_H
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 class Window;
 class World;
@@ -21,6 +22,11 @@ public:
     void RepositionRight();
 
 private:
+    const int fill_rect_margin = 2;
+
+    TTF_Font* font;
+    SDL_Color font_color;
+
     // current index of the grid
     int x0;
     int y0;
@@ -41,6 +47,7 @@ private:
     SDL_Renderer* renderer;
 
     void LoadImages();
+    void LoadFonts();
 
     void AssignToCellRect(int x, int y, SDL_Rect* rect);
 };
