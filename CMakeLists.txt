@@ -44,20 +44,3 @@ else()
                                 ${SDL2_TTF_LIBRARIES}) 
 endif()
 
-# Copy dlls
-if (WIN32)
-    add_custom_command(TARGET simulation POST_BUILD 
-        COMMAND ${CMAKE_COMMAND} -E copy_directory 
-        "${PROJECT_SOURCE_DIR}/lib/"
-        "$<TARGET_FILE_DIR:simulation>")
-
-    add_custom_command(TARGET simulation POST_BUILD 
-        COMMAND ${CMAKE_COMMAND} -E copy_directory 
-        "${PROJECT_SOURCE_DIR}/images/"
-        "$<TARGET_FILE_DIR:simulation>/images/")
-
-    add_custom_command(TARGET simulation POST_BUILD 
-        COMMAND ${CMAKE_COMMAND} -E copy_directory 
-        "${PROJECT_SOURCE_DIR}/fonts/"
-        "$<TARGET_FILE_DIR:simulation>/fonts")
-endif()

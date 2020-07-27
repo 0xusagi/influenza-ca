@@ -6,3 +6,4 @@ env/
 build/
 influenza.png
 *.conf
+.vs/
