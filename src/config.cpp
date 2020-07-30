@@ -129,10 +129,12 @@ void store_line(std::string key, std::string value) {
 
         // do strtok operation to get the values
         char* token;
+        char* delim = " ";
+        token = strtok(s, delim);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                token = strtok(s, " ");
                 neighbour_infect_multiplier[i][j] = atof(token);
+                token = strtok(NULL, " ");
             }
         }
 

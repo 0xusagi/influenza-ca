@@ -145,7 +145,6 @@ void World::UpdateEpithelialCells() {
     // assign previous states
     for (int x = 0; x < kGridWidth; x++) {
         for (int y = 0; y < kGridHeight; y++) {
-            printf("%d %d\n", x, y);
             epithelial_cells[x][y]->FlipStates();
         }
     }
