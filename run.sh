@@ -32,23 +32,25 @@ if [ -z "${n}" ]; then
     usage
 fi
 
-all_out_names=""
-
+all_outnames=""
+all_section_outnames=""
 
 declare -i i
 i=1
 while [ $i -le $n ]
 do
-    outname="${out_dir}/out${i}.csv"
+    outname="${out_dir}/out${i}.out"
+    sectionoutname="${out_dir}/section${i}.out"
 
     # run the simulation
-    ./build/simulation -f $outname $args
+    ./build/simulation -f $outname -s $sectionoutname $args
 
     if [ $? -ne "0" ]; then
         exit 1
     fi
 
     all_outnames="${all_outnames} ${outname}"
+    all_section_outnames="${all_section_outnames} ${sectionoutname}"
     i+=1
 done
 

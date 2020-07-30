@@ -23,11 +23,9 @@ int return_in_bounds_y(int y);
 struct cmd_opts {
     int graphics;
     char* output_filename;
-    char* graph_script_path;
+    char* section_filename;
 };
 
 struct cmd_opts parse_cmd_opts(int argc, char** argv);
-
-void plot_graph(struct cmd_opts options);
 
 #endif

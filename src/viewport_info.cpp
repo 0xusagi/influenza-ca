@@ -52,11 +52,27 @@ void ViewportInfo::Draw(World& world) {
     dest.x = input_x0;
     dest.y = 0;
 
+    int n_healthy = 0;
+    int n_s_infected = 0;
+    int n_d_infected = 0;
+    int n_c_infected = 0;
+    int n_dead = 0;
+    int n_immune = 0;
+
+    for (int i = 0; i < kNumSections; i++) {
+        n_healthy += world.counts[i].healthy;
+        n_s_infected += world.counts[i].s_infected;
+        n_d_infected += world.counts[i].d_infected;
+        n_c_infected += world.counts[i].c_infected;
+        n_dead += world.counts[i].dead;
+        n_immune += world.counts[i].immune;
+    }
+
     // healthy 
     std::stringstream ss;
     ss.str("");
-    ss << world.counts.healthy;
-    ss << "(" << world.counts.healthy * 1.0 / kTotalEpithelialCells << ")";
+    ss << n_healthy;
+    ss << "(" << n_healthy * 1.0 / kTotalEpithelialCells << ")";
     SDL_Texture* healthy_texture;
     CreateTextureFromText(renderer, ss.str(), &healthy_texture, &dest, font, font_color);
     SDL_RenderCopy(renderer, healthy_texture, NULL, &dest);
@@ -65,8 +81,8 @@ void ViewportInfo::Draw(World& world) {
     dest.y += dest.h + margin;
 
     ss.str("");
-    ss << world.counts.s_infected;
-    ss << "(" << world.counts.s_infected * 1.0 / kTotalEpithelialCells << ")";
+    ss << n_s_infected;
+    ss << "(" << n_s_infected * 1.0 / kTotalEpithelialCells << ")";
     SDL_Texture* stv_infected_texture;
     CreateTextureFromText(renderer, ss.str(), &stv_infected_texture, &dest, font, font_color);
     SDL_RenderCopy(renderer, stv_infected_texture, NULL, &dest);
@@ -75,8 +91,8 @@ void ViewportInfo::Draw(World& world) {
     dest.y += dest.h + margin;
 
     ss.str("");
-    ss << world.counts.d_infected;
-    ss << "(" << world.counts.d_infected * 1.0 / kTotalEpithelialCells << ")";
+    ss << n_d_infected;
+    ss << "(" << n_d_infected * 1.0 / kTotalEpithelialCells << ")";
     SDL_Texture* dip_infected_texture;
     CreateTextureFromText(renderer, ss.str(), &dip_infected_texture, &dest, font, font_color);
     SDL_RenderCopy(renderer, dip_infected_texture, NULL, &dest);
@@ -85,8 +101,8 @@ void ViewportInfo::Draw(World& world) {
     dest.y += dest.h + margin;
 
     ss.str("");
-    ss << world.counts.c_infected;
-    ss << "(" << world.counts.c_infected * 1.0 / kTotalEpithelialCells << ")";
+    ss << n_c_infected;
+    ss << "(" << n_c_infected * 1.0 / kTotalEpithelialCells << ")";
     SDL_Texture* co_infected_texture;
     CreateTextureFromText(renderer, ss.str(), &co_infected_texture, &dest, font, font_color);
     SDL_RenderCopy(renderer, co_infected_texture, NULL, &dest);
@@ -95,8 +111,8 @@ void ViewportInfo::Draw(World& world) {
     dest.y += dest.h + margin;
 
     ss.str("");
-    ss << world.counts.dead;
-    ss << "(" << world.counts.dead * 1.0 / kTotalEpithelialCells << ")";
+    ss << n_dead;
+    ss << "(" << n_dead * 1.0 / kTotalEpithelialCells << ")";
     SDL_Texture* dead_texture;
     CreateTextureFromText(renderer, ss.str(), &dead_texture, &dest, font, font_color);
     SDL_RenderCopy(renderer, dead_texture, NULL, &dest);
@@ -105,8 +121,8 @@ void ViewportInfo::Draw(World& world) {
     dest.y += dest.h + margin;
 
     ss.str("");
-    ss << world.counts.immune;
-    ss << "(" << world.counts.immune * 1.0 / kTotalEpithelialCells << ")";
+    ss << n_immune;
+    ss << "(" << n_immune * 1.0 / kTotalEpithelialCells << ")";
     SDL_Texture* immune_texture;
     CreateTextureFromText(renderer, ss.str(), &immune_texture, &dest, font, font_color);
     SDL_RenderCopy(renderer, immune_texture, NULL, &dest);

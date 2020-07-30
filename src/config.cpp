@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <string>
+#include <string.h>
 
 int kGridWidth;
 int kGridHeight;
@@ -12,6 +13,7 @@ double kImmLifespan;
 double kCellLifespan;
 double kInfectLifespan;
 double kStvInfectInit;
+double kStvInfectInitLoc;
 double kDipInfectInit;
 double kDeadInit;
 double kStvErrorRate;
@@ -30,6 +32,13 @@ double kTotalEpithelialCells;
 
 double kDipExtInit;
 double kDipExtTime;
+double kDipExtLoc;
+
+double kVirusInitRange;
+
+int kNumSections;
+
+double neighbour_infect_multiplier[3][3] = { {1, 1, 1}, {1, 1, 1}, {1, 1, 1} };
 
 int kGlobalEpithelialDivision;
 int kSimulationLength;
@@ -55,6 +64,9 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "stv_infect_init")
         kStvInfectInit = std::stod(value);
+
+    else if (key == "stv_infect_init_loc")
+        kStvInfectInitLoc = std::stod(value);
 
     else if (key == "dip_infect_init")
         kDipInfectInit = std::stod(value);
@@ -103,6 +115,32 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "dip_ext_time")
         kDipExtTime = std::stod(value);
+
+    else if (key == "dip_ext_loc") 
+        kDipExtLoc = std::stod(value);
+
+    else if (key == "virus_init_range")
+        kVirusInitRange = std::stod(value);
+
+    else if (key == "n_sections")
+        kNumSections = std::stoi(value);
+
+    else if (key == "neighbour_infect_multiplier") {
+        char* s = new char[value.size() + 1];
+        std::copy(value.begin(), value.end(), s);
+        s[value.size()] = '\0';
+
+        // do strtok operation to get the values
+        char* token;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                token = strtok(s, " ");
+                neighbour_infect_multiplier[i][j] = atof(token);
+            }
+        }
+
+        delete s;
+    }
 
     else if (key == "global_epithelial_division") 
         kGlobalEpithelialDivision = std::stoi(value);
@@ -157,6 +195,7 @@ void print_config() {
     printf("- Cell lifespan: %f\n", kCellLifespan);
     printf("- Infect lifespan: %f\n", kInfectLifespan);
     printf("- STV infect init: %f\n", kStvInfectInit);
+    printf("- STV infect location: %f\n", kStvInfectInitLoc);
     printf("- DIP infect init: %f\n", kDipInfectInit);
     printf("- Dead init: %f\n", kDeadInit);
     printf("- STV error rate: %f\n", kStvErrorRate);
@@ -173,6 +212,15 @@ void print_config() {
     printf("- Recruitment: %f\n", kRecruitment);
     printf("- DIP external init: %f\n", kDipExtInit);
     printf("- DIP external time: %f\n", kDipExtTime);
+    printf("- DIP external init location: %f\n", kDipExtLoc);
+    printf("- Viral initial spread: %f\n", kVirusInitRange);
+    printf("- Number of sections: %d\n", kNumSections);
+
+    printf("- Neighbour infect multiplier:\n");
+    for (int i = 0; i < 3; i++) {
+        printf("\t%f %f %f\n", neighbour_infect_multiplier[i][0], neighbour_infect_multiplier[i][1], neighbour_infect_multiplier[i][2]);
+    }
+
     printf("- Global epithelial cell division: %d\n", kGlobalEpithelialDivision);
     printf("- Simulation length: %dh\n", kSimulationLength);
 }

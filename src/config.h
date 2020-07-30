@@ -1,6 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+
 extern int kGridWidth;
 extern int kGridHeight;
 extern double kFlowRate;
@@ -8,6 +9,7 @@ extern double kImmLifespan;
 extern double kCellLifespan;
 extern double kInfectLifespan;
 extern double kStvInfectInit;
+extern double kStvInfectInitLoc;
 extern double kDipInfectInit;
 extern double kDeadInit;
 extern double kStvErrorRate;
@@ -26,9 +28,16 @@ extern int kGlobalEpithelialDivision;
 
 extern double kDipExtInit;
 extern double kDipExtTime;
+extern double kDipExtLoc;
+
+extern double kVirusInitRange;
+
+extern int kNumSections;
 
 extern double kTotalEpithelialCells;
 extern int kSimulationLength;
+
+extern double neighbour_infect_multiplier[3][3];
 
 void parse_config();
 void print_config();

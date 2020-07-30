@@ -20,8 +20,9 @@ typedef struct {
 
 class World {
 public:
-    counts_t prev_counts;
-    counts_t counts;
+    std::vector<counts_t> prev_counts;
+    std::vector<counts_t> counts;
+    int n_cells_in_section;
     int timestep;
     int immune_cells_to_be_added;
     int base_recruitment_immune_cells;
@@ -29,10 +30,10 @@ public:
     EpithelialCell*** epithelial_cells; 
     std::vector<ImmuneCell> immune_cells;
 
-    World(FILE* fp);
+    World(FILE* out_fp, FILE* section_fp);
     ~World();
 
-    void Step(FILE* fp);
+    void Step(FILE* out_fp, FILE* section_fp);
 
     // immune cell recognition event
     void MatureImmuneCellRecognitionEvent(int x, int y);
@@ -42,7 +43,7 @@ private:
     void UpdateEpithelialCells();
     void UpdateImmuneCells();
 
-    void PrintTimeStepToFile(FILE* fp);
+    void PrintTimeStepToFile(FILE* out_fp, FILE* section_fp);
 
     void AddExtDip();
 

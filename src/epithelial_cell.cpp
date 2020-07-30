@@ -13,13 +13,6 @@ EpithelialCell::EpithelialCell(int x, int y, int age, int infect_time, int time_
 
 void EpithelialCell::Update(World& world) {
     age++;
-    time_left_to_divide--;
-
-    // cell has already divided 
-    // renew division time
-    if (time_left_to_divide < 0) {
-        time_left_to_divide = kDivisionTime;
-    }
 
     if (state == EpithelialState::HEALTHY) {
         UpdateHealthy(world);
@@ -54,6 +47,13 @@ void EpithelialCell::Update(World& world) {
     else {
         UpdateDead(world);
     }
+
+    // cell has already divided 
+    // renew division time
+    time_left_to_divide--;
+    if (time_left_to_divide < 0) {
+        time_left_to_divide = kDivisionTime;
+    }
 }
 
 void EpithelialCell::FlipStates() {
@@ -74,11 +74,13 @@ void EpithelialCell::UpdateHealthy(World& world) {
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
+
+            double multiplier = neighbour_infect_multiplier[i + 1][j + 1];
             
             // neighbour with stv only
             if (neighbour_state == EpithelialState::S_INFECTIOUS) {
                 // cell gets infected
-                if (random_p() < kStvInfectRate / 8) {
+                if (random_p() < multiplier * kStvInfectRate / 8) {
                     // determine whether stv or dip infected the cell
                     if (random_p() < kStvErrorRate) {
                         dip = 1;
@@ -92,7 +94,7 @@ void EpithelialCell::UpdateHealthy(World& world) {
             // neighbour with both stv and dip
             else if (neighbour_state == EpithelialState::C_INFECTIOUS) {
                 // cell gets infected
-                if (random_p() < kCoInfectRate / 8) {
+                if (random_p() < multiplier * kCoInfectRate / 8) {
                     // determine whether stv or dip infected the cell
                     if (random_p() < kCoErrorRate) {
                         stv = 1;
@@ -139,9 +141,11 @@ void EpithelialCell::UpdateStvInfected(World& world) {
             int new_y = return_in_bounds_y(y + j);
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
 
+            double multiplier = neighbour_infect_multiplier[i + 1][j + 1];
+
             // from a stv-infected neighbour 
             if (neighbour_state == EpithelialState::S_INFECTIOUS) {
-                if (random_p() < kStvInfectRate) {
+                if (random_p() < multiplier * kStvInfectRate / 8) {
                     if (random_p() < kStvErrorRate) {
                         state = EpithelialState::C_INFECTIOUS;
                         return;
@@ -150,7 +154,7 @@ void EpithelialCell::UpdateStvInfected(World& world) {
             }
             // from a co-infected neighbour
             else if (neighbour_state == EpithelialState::C_INFECTIOUS) {
-                if (random_p() < kCoInfectRate) {
+                if (random_p() < multiplier * kCoInfectRate / 8) {
                     // only consider the rate at which receives a dip since already 
                     // infected with stv
                     if (random_p() >= kCoErrorRate) {
@@ -197,9 +201,11 @@ void EpithelialCell::UpdateDipInfected(World& world) {
             int new_y = return_in_bounds_y(y + j);
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
 
+            double multiplier = neighbour_infect_multiplier[i + 1][j + 1];
+
             // from a stv-infected neighbour 
             if (neighbour_state == EpithelialState::S_INFECTIOUS) {
-                if (random_p() < kStvInfectRate) {
+                if (random_p() < multiplier * kStvInfectRate / 8) {
                     if (random_p() >= kStvErrorRate) {
                         state = EpithelialState::C_INFECTIOUS;
                         infect_time = 0;
@@ -209,7 +215,7 @@ void EpithelialCell::UpdateDipInfected(World& world) {
             }
             // from a co-infected neighbour
             else if (neighbour_state == EpithelialState::C_INFECTIOUS) {
-                if (random_p() < kCoInfectRate) {
+                if (random_p() < multiplier * kCoInfectRate / 8) {
                     // only consider the rate at which receives a dip since already 
                     // infected with stv
                     if (random_p() < kCoErrorRate) {
@@ -280,7 +286,15 @@ void EpithelialCell::UpdateDead(World& world) {
 }
 
 double EpithelialCell::GetGlobalDivisionRate(World& world) {
-    return 1 / kDivisionTime * world.prev_counts.healthy / world.prev_counts.dead;
+    int healthy_count = 0;
+    int dead_count = 0;
+
+    for (int i = 0; i < kNumSections; i++) {
+        healthy_count += world.prev_counts[i].healthy;
+        dead_count += world.prev_counts[i].dead;
+    }
+
+    return 1 / kDivisionTime * healthy_count / dead_count;
 }
 
 double EpithelialCell::GetLocalDivisionRate(World& world) {
@@ -293,9 +307,10 @@ double EpithelialCell::GetLocalDivisionRate(World& world) {
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->state;
-            if (neighbour_state == EpithelialState::HEALTHY && time_left_to_divide == 0) {
+            if (neighbour_state == EpithelialState::HEALTHY && world.epithelial_cells[new_x][new_y]->time_left_to_divide == 0) {
                 // return uniform probability for each neighbour
-                return 1.0 / 8.0;
+                world.epithelial_cells[new_x][new_y]->time_left_to_divide--;
+                return 1.0;
             }
         }
     }

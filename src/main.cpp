@@ -13,20 +13,22 @@ int main(int argc, char *argv[]) {
     printf("Parsing config...\n");
     parse_config();
 
-    FILE* fp;
-    fp = fopen(options.output_filename, "w");
+    FILE* out_fp;
+    out_fp = fopen(options.output_filename, "w");
+    FILE* section_fp;
+    section_fp = fopen(options.section_filename, "w");
 
     // create the window for graphics
     Window window(options.graphics);
 
     // print the headers
-    fprintf(fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
+    fprintf(out_fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
 
     // create input
     Input input;
 
     printf("Initialising...\n");
-    World world = World(fp);
+    World world = World(out_fp, section_fp);
     window.Draw(world);
 
     printf("Starting simulation...\n");
@@ -51,11 +53,12 @@ int main(int argc, char *argv[]) {
             }
         }
         // update step
-        world.Step(fp);
+        world.Step(out_fp, section_fp);
         window.Draw(world);
     }
 
-    fclose(fp);
+    fclose(out_fp);
+    fclose(section_fp);
 
     // return 1 if quit with in the middle else 0
     if (input.quit) {
