@@ -38,6 +38,11 @@ int return_in_bounds_x(int x) {
 }
 
 int return_in_bounds_y(int y) {
+    // No toroidal condition for y boundary so just return the out of bounds
+    if (!kToroidalY) {
+        return y;
+    }
+
     if (y >= kGridHeight) {
         return 0;
     }
@@ -46,6 +51,14 @@ int return_in_bounds_y(int y) {
     }
 
     return y;
+}
+
+int is_out_of_bounds_x(int x) {
+    return x >= kGridWidth || x < 0;
+}
+
+int is_out_of_bounds_y(int y) {
+    return y >= kGridHeight || y < 0;
 }
 
 struct cmd_opts parse_cmd_opts(int argc, char** argv) {

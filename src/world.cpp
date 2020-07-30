@@ -38,8 +38,8 @@ World::World(FILE* out_fp, FILE* section_fp)
     }
 
     // TODO: Convert to depth in cm rather than depth to cell
-    int min_cell_depth = kStvInfectInitLoc - kVirusInitRange;
-    int max_cell_depth = kStvInfectInitLoc + kVirusInitRange;
+    int min_cell_depth = 0;
+    int max_cell_depth = kStvInfectInitLoc;
 
     // initialise infected cells
     printf("Initialising infected cells\n"); 
@@ -145,6 +145,7 @@ void World::UpdateEpithelialCells() {
     // assign previous states
     for (int x = 0; x < kGridWidth; x++) {
         for (int y = 0; y < kGridHeight; y++) {
+            printf("%d %d\n", x, y);
             epithelial_cells[x][y]->FlipStates();
         }
     }
@@ -300,8 +301,8 @@ void World::AddExtDip() {
     int dip_count = kTotalEpithelialCells * kDipExtInit;
 
     // TODO: change to cm
-    int min_cell_depth = kDipExtLoc - kVirusInitRange;
-    int max_cell_depth = kDipExtLoc + kVirusInitRange;
+    int min_cell_depth = 0;
+    int max_cell_depth = kDipExtLoc;
 
     for (int i = 0; i < dip_count; i++) {
         int x = RandomX();

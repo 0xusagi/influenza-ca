@@ -34,11 +34,11 @@ double kDipExtInit;
 double kDipExtTime;
 double kDipExtLoc;
 
-double kVirusInitRange;
-
 int kNumSections;
 
 double neighbour_infect_multiplier[3][3] = { {1, 1, 1}, {1, 1, 1}, {1, 1, 1} };
+
+int kToroidalY;
 
 int kGlobalEpithelialDivision;
 int kSimulationLength;
@@ -119,9 +119,6 @@ void store_line(std::string key, std::string value) {
     else if (key == "dip_ext_loc") 
         kDipExtLoc = std::stod(value);
 
-    else if (key == "virus_init_range")
-        kVirusInitRange = std::stod(value);
-
     else if (key == "n_sections")
         kNumSections = std::stoi(value);
 
@@ -141,6 +138,9 @@ void store_line(std::string key, std::string value) {
 
         delete s;
     }
+
+    else if (key == "toroidal_y") 
+        kToroidalY = std::stoi(value);
 
     else if (key == "global_epithelial_division") 
         kGlobalEpithelialDivision = std::stoi(value);
@@ -213,7 +213,6 @@ void print_config() {
     printf("- DIP external init: %f\n", kDipExtInit);
     printf("- DIP external time: %f\n", kDipExtTime);
     printf("- DIP external init location: %f\n", kDipExtLoc);
-    printf("- Viral initial spread: %f\n", kVirusInitRange);
     printf("- Number of sections: %d\n", kNumSections);
 
     printf("- Neighbour infect multiplier:\n");

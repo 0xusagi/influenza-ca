@@ -19,6 +19,9 @@ double random_p();
 int return_in_bounds_x(int x);
 int return_in_bounds_y(int y);
 
+int is_out_of_bounds_x(int x);
+int is_out_of_bounds_y(int y);
+
 /* Command line options */
 struct cmd_opts {
     int graphics;

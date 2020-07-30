@@ -30,14 +30,14 @@ extern double kDipExtInit;
 extern double kDipExtTime;
 extern double kDipExtLoc;
 
-extern double kVirusInitRange;
-
 extern int kNumSections;
 
 extern double kTotalEpithelialCells;
 extern int kSimulationLength;
 
 extern double neighbour_infect_multiplier[3][3];
+
+extern int kToroidalY;
 
 void parse_config();
 void print_config();

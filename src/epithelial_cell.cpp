@@ -9,6 +9,7 @@ EpithelialCell::EpithelialCell(int x, int y, int age, int infect_time, int time_
     age(age),
     infect_time(infect_time),
     time_left_to_divide(time_left_to_divide),
+    prev_state(EpithelialState::HEALTHY),
     state(EpithelialState::HEALTHY) {}
 
 void EpithelialCell::Update(World& world) {
@@ -73,6 +74,10 @@ void EpithelialCell::UpdateHealthy(World& world) {
         for (int j = -1; j <= 1; j++) {
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
+
+            // boundary condition for y
+            if (is_out_of_bounds_y(new_y)) continue;
+
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
 
             double multiplier = neighbour_infect_multiplier[i + 1][j + 1];
@@ -139,6 +144,10 @@ void EpithelialCell::UpdateStvInfected(World& world) {
         for (int j = -1; j <= 1; j++) {
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
+
+            // boundary condition for y
+            if (is_out_of_bounds_y(new_y)) continue;
+
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
 
             double multiplier = neighbour_infect_multiplier[i + 1][j + 1];
@@ -199,6 +208,10 @@ void EpithelialCell::UpdateDipInfected(World& world) {
         for (int j = -1; j <= 1; j++) {
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
+
+            // boundary condition for y
+            if (is_out_of_bounds_y(new_y)) continue;
+
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->prev_state;
 
             double multiplier = neighbour_infect_multiplier[i + 1][j + 1];
@@ -306,6 +319,10 @@ double EpithelialCell::GetLocalDivisionRate(World& world) {
             // if the neighbour is healthy and is time to divide,
             int new_x = return_in_bounds_x(x + i);
             int new_y = return_in_bounds_y(y + j);
+
+            // boundary condition for y 
+            if (is_out_of_bounds_y(new_y)) continue;
+
             EpithelialState neighbour_state = world.epithelial_cells[new_x][new_y]->state;
             if (neighbour_state == EpithelialState::HEALTHY && world.epithelial_cells[new_x][new_y]->time_left_to_divide == 0) {
                 // return uniform probability for each neighbour
