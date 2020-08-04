@@ -13,16 +13,15 @@ if __name__ == "__main__":
 
     line_names = []
     data = {}
-    line_count = 0
 
-    is_first = True
     # First line is the list of all headers
     for i in range(n_files):
         filename = sys.argv[i + 1]
+        line_count = 0
         with open(filename, "r") as f:
             for line in f:
                 # First file to be read, so need to initialise
-                if is_first:
+                if i == 0:
                     if line_count == 0:
                         line_names = line.split(',')
                         for name in line_names:
@@ -39,10 +38,8 @@ if __name__ == "__main__":
 
                     else:
                         split_line = line.split(',')
-                        col = 0
                         for name, val in zip(line_names, split_line):
-                            data[name][col] += float(val)
-                            col += 1
+                            data[name][line_count - 1] += float(val)
 
                 line_count += 1
 
@@ -55,13 +52,17 @@ if __name__ == "__main__":
     x = np.arange(t)
     x_ticks = np.arange(0, t, 24 * 6)
     x_labels = np.arange(0, t // (24 * 6) + 1)
-    plt.xticks(x_ticks, x_labels)
+    plt.xticks(x_ticks, x_labels, fontsize=12)
+
+    y_ticks = [y / 10 for y in range(11)]
+    y_labels = [y / 10 for y in range(11)]
+    plt.yticks(y_ticks, y_labels, fontsize=12)
 
     for key in data.keys():
         plt.plot(x, data[key], label=key)
 
     plt.legend(loc='upper right')
-    plt.xlabel('time (days)')
-    plt.ylabel('% total cells')
+    plt.xlabel('time (days)', fontsize=12)
+    plt.ylabel('% total cells', fontsize=12)
 
     plt.savefig('influenza.png')
