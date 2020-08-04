@@ -23,23 +23,38 @@ if __name__ == "__main__":
                 # First file to be read, so need to initialise
                 if i == 0:
                     if line_count == 0:
-                        line_names = line.split(',')
+                        line_names = line.rstrip().split(',')
                         for name in line_names:
                             data[name] = []
 
+                        # Add a new column called total infected
+                        data['total-infected'] = []
+
                     else:
                         split_line = line.split(',')
+                        total_infected = 0
                         for name, val in zip(line_names, split_line):
                             data[name].append(float(val))
 
+                            if name == "stv-infected" or name == "dip-infected" or name == "co-infected":
+                                total_infected += float(val)
+
+                        data['total-infected'].append(total_infected)
+
                 else:
                     if line_count == 0:
-                        line_names = line.split(',')
+                        line_names = line.rstrip().split(',')
 
                     else:
                         split_line = line.split(',')
+                        total_infected = 0
                         for name, val in zip(line_names, split_line):
                             data[name][line_count - 1] += float(val)
+
+                            if name == "stv-infected" or name == "dip-infected" or name == "co-infected":
+                                total_infected += float(val)
+
+                        data['total-infected'][line_count - 1] += total_infected
 
                 line_count += 1
 
@@ -59,7 +74,11 @@ if __name__ == "__main__":
     plt.yticks(y_ticks, y_labels, fontsize=12)
 
     for key in data.keys():
-        plt.plot(x, data[key], label=key)
+        # change linestyle for total infected cells
+        if key == "total-infected":
+            plt.plot(x, data[key], label=key, linestyle="dashed")
+        else:
+            plt.plot(x, data[key], label=key)
 
     plt.legend(loc='upper right')
     plt.xlabel('time (days)', fontsize=12)
