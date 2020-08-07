@@ -41,6 +41,7 @@ double neighbour_infect_multiplier[3][3] = { {1, 1, 1}, {1, 1, 1}, {1, 1, 1} };
 int kToroidalY;
 
 int kGlobalEpithelialDivision;
+int kRandomImmuneCellSpawn;
 int kSimulationLength;
 
 void store_line(std::string key, std::string value) {
@@ -129,7 +130,7 @@ void store_line(std::string key, std::string value) {
 
         // do strtok operation to get the values
         char* token;
-        char* delim = " ";
+        const char* delim = " ";
         token = strtok(s, delim);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -146,6 +147,9 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "global_epithelial_division") 
         kGlobalEpithelialDivision = std::stoi(value);
+
+    else if (key == "random_immune_cell_spawn")
+        kRandomImmuneCellSpawn = std::stoi(value);
 
     else if (key == "simulation_hours")
         kSimulationLength = std::stod(value);
@@ -223,5 +227,6 @@ void print_config() {
     }
 
     printf("- Global epithelial cell division: %d\n", kGlobalEpithelialDivision);
+    printf("- Random immune cell spawn: %d\n", kRandomImmuneCellSpawn);
     printf("- Simulation length: %dh\n", kSimulationLength);
 }

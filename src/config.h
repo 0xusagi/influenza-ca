@@ -25,6 +25,7 @@ extern double kBaseImmCell;
 extern double kRecruitDelay;
 extern double kRecruitment;
 extern int kGlobalEpithelialDivision;
+extern int kRandomImmuneCellSpawn;
 
 extern double kDipExtInit;
 extern double kDipExtTime;

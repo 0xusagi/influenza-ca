@@ -183,7 +183,6 @@ void World::UpdateEpithelialCells() {
 
 void World::UpdateImmuneCells() {
     int n_virgin = 0;
-    immune_cells_to_be_added = 0;
     // update first and remove if already dead
     for (auto cell = immune_cells.begin(); cell != immune_cells.end();) {
         (*cell).Update(*this);
@@ -216,12 +215,10 @@ void World::UpdateImmuneCells() {
         counts[section].immune++;
     }
 
-    // add newly recruited mature immune cells
-    for (int i = 0; i < immune_cells_to_be_added; i++) {
-        int x = RandomX();
-        int y = RandomY();
-        immune_cells.push_back(ImmuneCell(x, y, -kRecruitDelay, ImmuneState::MATURE));
-    }
+    // add newly recruited mature immune cells (transfer from new_mature_immune_cells to
+    // immune_cells)
+    std::move(new_mature_immune_cells.begin(), new_mature_immune_cells.end(), std::back_inserter(immune_cells));
+    new_mature_immune_cells.erase(new_mature_immune_cells.begin(), new_mature_immune_cells.end());
 }
 
 void World::MatureImmuneCellRecognitionEvent(int x, int y) {
@@ -244,12 +241,23 @@ void World::MatureImmuneCellRecognitionEvent(int x, int y) {
     }
 
     for (int i = 0; i < base_recruitment_immune_cells; i++) {
-        immune_cells_to_be_added++;
+        AddNewImmuneCellFromRecognition(x, y);
     }
 
     // see if random recruitment is added
     if (random_p() < recruitment_probability) {
-        immune_cells_to_be_added++;
+        AddNewImmuneCellFromRecognition(x, y);
+    }
+}
+
+void World::AddNewImmuneCellFromRecognition(int x, int y) {
+    if (kRandomImmuneCellSpawn) {
+        int random_x = RandomX();
+        int random_y = RandomY();
+        new_mature_immune_cells.push_back(ImmuneCell(random_x, random_y, -kRecruitDelay, ImmuneState::MATURE));
+    }
+    else {
+        new_mature_immune_cells.push_back(ImmuneCell(x, y, -kRecruitDelay, ImmuneState::MATURE));
     }
 }
 

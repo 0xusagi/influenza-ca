@@ -24,11 +24,11 @@ public:
     std::vector<counts_t> counts;
     int n_cells_in_section;
     int timestep;
-    int immune_cells_to_be_added;
     int base_recruitment_immune_cells;
     double recruitment_probability;
     EpithelialCell*** epithelial_cells; 
     std::vector<ImmuneCell> immune_cells;
+    std::vector<ImmuneCell> new_mature_immune_cells;
 
     World(FILE* out_fp, FILE* section_fp);
     ~World();
@@ -46,6 +46,8 @@ private:
     void PrintTimeStepToFile(FILE* out_fp, FILE* section_fp);
 
     void AddExtDip();
+
+    void AddNewImmuneCellFromRecognition(int x, int y);
 
     // graphics
     void ClearAndDrawToScreen(Window& window);
