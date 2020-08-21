@@ -40,6 +40,9 @@ double neighbour_infect_multiplier[3][3] = { {1, 1, 1}, {1, 1, 1}, {1, 1, 1} };
 
 int kToroidalY;
 
+int graphics_start_x;
+int graphics_start_y;
+
 int kGlobalEpithelialDivision;
 int kRandomImmuneCellSpawn;
 int kSimulationLength;
@@ -144,6 +147,12 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "toroidal_y") 
         kToroidalY = std::stoi(value);
+
+    else if (key == "graphics_start_x")
+        graphics_start_x = std::stoi(value);
+
+    else if (key == "graphics_start_y")
+        graphics_start_y = std::stoi(value);
 
     else if (key == "global_epithelial_division") 
         kGlobalEpithelialDivision = std::stoi(value);

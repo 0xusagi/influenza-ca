@@ -25,10 +25,11 @@ int is_out_of_bounds_y(int y);
 /* Command line options */
 struct cmd_opts {
     int graphics;
+    char* base_name;
     char* output_filename;
     char* section_filename;
 };
 
-struct cmd_opts parse_cmd_opts(int argc, char** argv);
+void parse_cmd_opts(int argc, char** argv, struct cmd_opts *opts);
 
 #endif

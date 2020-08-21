@@ -7,7 +7,8 @@
 
 int main(int argc, char *argv[]) {
     // parse cmd line options
-    struct cmd_opts options = parse_cmd_opts(argc, argv);
+    struct cmd_opts options;
+    parse_cmd_opts(argc, argv, &options);
 
     // parse config
     printf("Parsing config...\n");
@@ -19,7 +20,7 @@ int main(int argc, char *argv[]) {
     section_fp = fopen(options.section_filename, "w");
 
     // create the window for graphics
-    Window window(options.graphics);
+    Window window(options);
 
     // print the headers
     fprintf(out_fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");

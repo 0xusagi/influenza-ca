@@ -61,35 +61,40 @@ int is_out_of_bounds_y(int y) {
     return y >= kGridHeight || y < 0;
 }
 
-struct cmd_opts parse_cmd_opts(int argc, char** argv) {
-    struct cmd_opts opts;
-    opts.graphics = 0;
-    opts.output_filename = "";
-    opts.section_filename = "";
+void parse_cmd_opts(int argc, char** argv, struct cmd_opts *opts) {
+    opts->graphics = 0;
+    opts->output_filename = "";
+    opts->section_filename = "";
 
     printf("Starting application with flags: \n");
 
     int c;
-    while ((c = getopt(argc, argv, "gf:s:")) != -1) {
+    while ((c = getopt(argc, argv, "gn:")) != -1) {
         switch (c) {
             case 'g':
                 printf("\tgraphics\n");
-                opts.graphics = 1;
+                opts->graphics = 1;
                 break;
 
-            case 'f':
-                printf("\toutput file: %s\n", optarg);
-                opts.output_filename = new char[strlen(optarg) + 1];
-                strcpy(opts.output_filename, optarg);
-                break;
+            case 'n':
+                int optarg_len = strlen(optarg);
+                opts->base_name = new char[optarg_len + 1];
+                strcpy(opts->base_name, optarg);
 
-            case 's':
-                printf("\tsection output file: %s\n", optarg);
-                opts.section_filename = new char[strlen(optarg) + 1];
-                strcpy(opts.section_filename, optarg);
-                break;;
+                const char* output_filename_suffix = "-out.out";
+                opts->output_filename = new char[optarg_len + strlen(output_filename_suffix) + 1];
+                strcpy(opts->output_filename, optarg);
+                strcat(opts->output_filename, output_filename_suffix);
+
+                const char* section_filename_suffix = "-section.out";
+                opts->section_filename = new char[optarg_len + strlen(section_filename_suffix) + 1];
+                strcpy(opts->section_filename, optarg);
+                strcat(opts->section_filename, section_filename_suffix);
+
+                printf("\tbase name: %s\n", opts->base_name);
+                printf("\toutput file: %s\n", opts->output_filename);
+                printf("\tsection output file: %s\n", opts->section_filename);
+                break;
         }
     }
-
-    return opts;
 }

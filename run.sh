@@ -13,13 +13,16 @@ fi
 
 # get arguments additional arguments
 args=""
-while getopts "gn:" arg; do
+while getopts "gn:s:" arg; do
     case $arg in
         n)
             n=${OPTARG}
             ;;
         g) 
             args="${args} -g"
+            ;;
+        s) 
+            basename=${OPTARG}
             ;;
         *)
             usage
@@ -39,11 +42,12 @@ declare -i i
 i=1
 while [ $i -le $n ]
 do
-    outname="${out_dir}/out${i}.out"
-    sectionoutname="${out_dir}/section${i}.out"
+    name="${out_dir}/${basename}${i}"
+    outname="${name}-out.out"
+    sectionoutname="${name}-section.out"
 
     # run the simulation
-    ./build/simulation -f $outname -s $sectionoutname $args
+    ./build/simulation -n $name $args
 
     if [ $? -ne "0" ]; then
         exit 1
@@ -57,3 +61,5 @@ done
 
 # plot the graph
 python3 graph/graph.py $all_outnames
+png_name="${basename}.png"
+mv influenza.png $png_name

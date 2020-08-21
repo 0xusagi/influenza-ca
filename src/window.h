@@ -21,7 +21,7 @@ public:
     int width;
     int height;
 
-    Window(int on);
+    Window(struct cmd_opts &options);
     ~Window();
 
     void Draw(World& world);
