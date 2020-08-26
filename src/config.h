@@ -40,6 +40,8 @@ extern double neighbour_infect_multiplier[3][3];
 
 extern int kToroidalY;
 
+extern int kCountDeadPatchesHour;
+
 extern int graphics_start_x;
 extern int graphics_start_y;
 

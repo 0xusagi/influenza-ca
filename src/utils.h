@@ -28,6 +28,7 @@ struct cmd_opts {
     char* base_name;
     char* output_filename;
     char* section_filename;
+    char* patches_filename;
 };
 
 void parse_cmd_opts(int argc, char** argv, struct cmd_opts *opts);

@@ -21,8 +21,6 @@ if ( MSVC )
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-
 set (src 
         src/config.cpp 
         src/epithelial_cell.cpp 

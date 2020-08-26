@@ -6,6 +6,8 @@
 #include "world.h"
 
 #include <math.h>
+#include <utility>
+#include <queue>
 
 World::World(FILE* out_fp, FILE* section_fp) 
     : n_cells_in_section(kGridHeight / kNumSections)
@@ -330,6 +332,84 @@ void World::AddExtDip() {
             epithelial_cells[x][y]->state = EpithelialState::C_INFECTED;
         }
     }
+}
+
+void World::PrintPatchSizes(FILE* fp, EpithelialState patch_state) {
+    std::vector<int> patch_sizes = GetPatchSizes(patch_state);
+
+    int size = patch_sizes.size();
+    for (int i = 0; i < size; i++) {
+        fprintf(fp, "%d", patch_sizes[i]);
+
+        if (i != size - 1) {
+            fprintf(fp, ",");
+        }
+    }
+}
+
+std::vector<int> World::GetPatchSizes(EpithelialState patch_state) {
+    std::vector<std::vector<int>> visited(kGridWidth, std::vector<int>(kGridHeight, 0));
+
+    std::vector<int> sizes;
+
+    int dx[2] = {-1, 1};
+    int dy[2] = {-1, 1};
+    
+    for (int x = 0; x < kGridWidth; x++) {
+        for (int y = 0; y < kGridHeight; y++) {
+            // do a bfs for the current cell if it hasn't been visited 
+            if (!visited[x][y] && epithelial_cells[x][y]->state == patch_state) {
+                int n_dead_cells = 0;
+
+                std::queue<std::pair<int, int>> q;
+
+                q.push(std::pair<int, int> (x, y));
+                visited[x][y] = 1;
+
+                std::pair<int, int> curr;
+                while (!q.empty()) {
+                    curr = q.front();
+
+                    // if not a dead epithelial cell then just continue
+                    if (epithelial_cells[curr.first][curr.second]->state != patch_state) {
+                        q.pop();
+                        continue;
+                    }
+
+                    // add to the counter of dead cells since the current epithelial cell is dead
+                    n_dead_cells++;
+
+                    // add north, south, east and west neighbours
+                    for (int i = 0; i < 2; i++) {
+                        int new_x = return_in_bounds_x(curr.first + dx[i]);
+                        int new_y = return_in_bounds_y(curr.second + dy[i]);
+
+                        if (is_out_of_bounds_y(new_y)) continue;
+
+                        if (!visited[new_x][curr.second]) {
+                            visited[new_x][curr.second] = 1;
+                            q.push(std::pair(new_x, curr.second));
+                        }
+
+                        if (!visited[curr.first][new_y]) {
+                            visited[curr.first][new_y] = 1;
+                            q.push(std::pair(curr.first, new_y));
+                        }
+                    }
+
+                    q.pop();
+                }
+
+                // append the patch size to the list
+                sizes.push_back(n_dead_cells);
+            }
+            else {
+                visited[x][y] = 1;
+            }
+        }
+    }
+
+    return sizes;
 }
 
 int World::RandomX() {

@@ -1,4 +1,4 @@
-
+#include "epithelial_cell.h"
 #include "config.h"
 #include "input.h"
 #include "window.h"
@@ -18,6 +18,8 @@ int main(int argc, char *argv[]) {
     out_fp = fopen(options.output_filename, "w");
     FILE* section_fp;
     section_fp = fopen(options.section_filename, "w");
+    FILE* patches_fp;
+    patches_fp = fopen(options.patches_filename, "w");
 
     // create the window for graphics
     Window window(options);
@@ -56,10 +58,16 @@ int main(int argc, char *argv[]) {
         // update step
         world.Step(out_fp, section_fp);
         window.Draw(world);
+
+        // time to count the dead epithelial cells
+        if (t == kCountDeadPatchesHour) {
+            world.PrintPatchSizes(patches_fp, EpithelialState::HEALTHY);
+        }
     }
 
     fclose(out_fp);
     fclose(section_fp);
+    fclose(patches_fp);
 
     // return 1 if quit with in the middle else 0
     if (input.quit) {

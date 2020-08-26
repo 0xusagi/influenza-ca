@@ -91,9 +91,15 @@ void parse_cmd_opts(int argc, char** argv, struct cmd_opts *opts) {
                 strcpy(opts->section_filename, optarg);
                 strcat(opts->section_filename, section_filename_suffix);
 
+                const char* patches_filename_suffix = "-patches.out";
+                opts->patches_filename = new char[optarg_len + strlen(patches_filename_suffix) + 1];
+                strcpy(opts->patches_filename, optarg);
+                strcat(opts->patches_filename, patches_filename_suffix);
+
                 printf("\tbase name: %s\n", opts->base_name);
                 printf("\toutput file: %s\n", opts->output_filename);
                 printf("\tsection output file: %s\n", opts->section_filename);
+                printf("\tpatches output file: %s\n", opts->patches_filename);
                 break;
         }
     }

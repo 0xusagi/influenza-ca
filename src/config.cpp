@@ -47,6 +47,8 @@ int kGlobalEpithelialDivision;
 int kRandomImmuneCellSpawn;
 int kSimulationLength;
 
+int kCountDeadPatchesHour;
+
 void store_line(std::string key, std::string value) {
     if (key == "grid_width")
         kGridWidth = std::stoi(value);
@@ -162,6 +164,9 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "simulation_hours")
         kSimulationLength = std::stod(value);
+
+    else if (key == "count_patch_hour")
+        kCountDeadPatchesHour = std::stod(value);
 }
 
 void parse_config() {
@@ -199,6 +204,8 @@ void parse_config() {
     kTotalEpithelialCells = kGridWidth * kGridHeight;
     kBaseImmCell *= kTotalEpithelialCells;
     kSimulationLength *= kFlowRate;
+
+    kCountDeadPatchesHour *= kFlowRate;
 }
 
 void print_config() {
@@ -238,4 +245,5 @@ void print_config() {
     printf("- Global epithelial cell division: %d\n", kGlobalEpithelialDivision);
     printf("- Random immune cell spawn: %d\n", kRandomImmuneCellSpawn);
     printf("- Simulation length: %dh\n", kSimulationLength);
+    printf("- Counting dead patches at: %d\n", kCountDeadPatchesHour);
 }

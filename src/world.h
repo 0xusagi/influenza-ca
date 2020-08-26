@@ -5,6 +5,8 @@
 #include <random>
 #include <vector>
 
+enum class EpithelialState;
+
 class EpithelialCell;
 class ImmuneCell;
 class Window;
@@ -38,6 +40,8 @@ public:
     // immune cell recognition event
     void MatureImmuneCellRecognitionEvent(int x, int y);
 
+    void PrintPatchSizes(FILE* fp, EpithelialState patch_state);
+
 private:
     // update 
     void UpdateEpithelialCells();
@@ -48,6 +52,8 @@ private:
     void AddExtDip();
 
     void AddNewImmuneCellFromRecognition(int x, int y);
+
+    std::vector<int> GetPatchSizes(EpithelialState patch_state);
 
     // graphics
     void ClearAndDrawToScreen(Window& window);
