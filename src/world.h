@@ -40,7 +40,8 @@ public:
     // immune cell recognition event
     void MatureImmuneCellRecognitionEvent(int x, int y);
 
-    void PrintPatchSizes(FILE* fp, EpithelialState patch_state);
+    // print information about a current timestep
+    void PrintInfo(FILE* fp);
 
 private:
     // update 
@@ -69,6 +70,14 @@ private:
     int RandomImmuneAge();
     std::uniform_int_distribution<int> division_time_distribution;
     int RandomDivisionTime();
+
+    // PRINTING
+    // print the patch sizes of a type of cell
+    void PrintPatchSizes(FILE* fp, EpithelialState patch_state);
+    
+    // average number of healthy epithelial cell neighbours that a dead epithelial cell
+    // has
+    void PrintProportionHealthyOfDeadNeighbours(FILE* fp);
 };
 
 #endif

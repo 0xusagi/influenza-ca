@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 
         // time to count the dead epithelial cells
         if (t == kCountDeadPatchesHour) {
-            world.PrintPatchSizes(patches_fp, EpithelialState::HEALTHY);
+            world.PrintInfo(patches_fp);
         }
     }
 

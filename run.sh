@@ -13,7 +13,8 @@ fi
 
 # get arguments additional arguments
 args=""
-while getopts "gn:s:" arg; do
+offset=0
+while getopts "gn:s:o:" arg; do
     case $arg in
         n)
             n=${OPTARG}
@@ -23,6 +24,9 @@ while getopts "gn:s:" arg; do
             ;;
         s) 
             basename=${OPTARG}
+            ;;
+        o)
+            offset=${OPTARG}
             ;;
         *)
             usage
@@ -39,7 +43,9 @@ all_outnames=""
 all_section_outnames=""
 
 declare -i i
-i=1
+i=$((offset + 1))
+n=$((n + offset))
+echo $n
 while [ $i -le $n ]
 do
     name="${out_dir}/${basename}${i}"
@@ -53,13 +59,5 @@ do
         exit 1
     fi
 
-    all_outnames="${all_outnames} ${outname}"
-    all_section_outnames="${all_section_outnames} ${sectionoutname}"
     i+=1
 done
-
-
-# plot the graph
-python3 graph/graph.py $all_outnames
-png_name="${basename}.png"
-mv influenza.png $png_name

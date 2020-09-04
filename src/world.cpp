@@ -334,6 +334,19 @@ void World::AddExtDip() {
     }
 }
 
+void World::PrintInfo(FILE *fp) {
+    // print proportions
+    PrintProportionHealthyOfDeadNeighbours(fp);
+    fprintf(fp, "+");
+
+    // print healthy patch sizes
+    PrintPatchSizes(fp, EpithelialState::HEALTHY);
+    fprintf(fp, "+");
+
+    // print dead patch sizes
+    PrintPatchSizes(fp, EpithelialState::DEAD);
+}
+
 void World::PrintPatchSizes(FILE* fp, EpithelialState patch_state) {
     std::vector<int> patch_sizes = GetPatchSizes(patch_state);
 
@@ -410,6 +423,43 @@ std::vector<int> World::GetPatchSizes(EpithelialState patch_state) {
     }
 
     return sizes;
+}
+
+void World::PrintProportionHealthyOfDeadNeighbours(FILE* fp) {
+    int n_dead = 0;
+    int n_dead_with_healthy_neighbour = 0;
+
+    int n_healthy;
+    for (int x = 0; x < kGridWidth; x++) {
+        for (int y = 0; y < kGridHeight; y++) {
+            EpithelialState state = epithelial_cells[x][y]->state;
+            if (state == EpithelialState::DEAD) {
+                n_dead++;
+                n_healthy = 0;
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
+                        int new_x = return_in_bounds_x(x + i);
+                        int new_y = return_in_bounds_y(y + j);
+
+                        if (is_out_of_bounds_y(new_y)) continue;
+
+                        if (epithelial_cells[new_x][new_y]->state == EpithelialState::HEALTHY) {
+                            n_healthy++;
+                        }
+                    }
+                }
+
+                // count only dead cells with healthy neighbours
+                if (n_healthy > 0) {
+                    n_dead_with_healthy_neighbour++;
+                }
+            }
+        }
+    }
+
+    double average_healthy_per_dead = 1.0 * n_dead_with_healthy_neighbour / n_dead;
+
+    fprintf(fp, "%f", average_healthy_per_dead);
 }
 
 int World::RandomX() {
