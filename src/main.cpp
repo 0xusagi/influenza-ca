@@ -1,4 +1,4 @@
-
+#include "epithelial_cell.h"
 #include "config.h"
 #include "input.h"
 #include "window.h"
@@ -7,26 +7,31 @@
 
 int main(int argc, char *argv[]) {
     // parse cmd line options
-    struct cmd_opts options = parse_cmd_opts(argc, argv);
+    struct cmd_opts options;
+    parse_cmd_opts(argc, argv, &options);
 
     // parse config
     printf("Parsing config...\n");
     parse_config();
 
-    FILE* fp;
-    fp = fopen(options.output_filename, "w");
+    FILE* out_fp;
+    out_fp = fopen(options.output_filename, "w");
+    FILE* section_fp;
+    section_fp = fopen(options.section_filename, "w");
+    FILE* patches_fp;
+    patches_fp = fopen(options.patches_filename, "w");
 
     // create the window for graphics
-    Window window(options.graphics);
+    Window window(options);
 
     // print the headers
-    fprintf(fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
+    fprintf(out_fp, "healthy,stv-infected,dip-infected,co-infected,dead,immune\n");
 
     // create input
     Input input;
 
     printf("Initialising...\n");
-    World world = World(fp);
+    World world = World(out_fp, section_fp);
     window.Draw(world);
 
     printf("Starting simulation...\n");
@@ -51,11 +56,18 @@ int main(int argc, char *argv[]) {
             }
         }
         // update step
-        world.Step(fp);
+        world.Step(out_fp, section_fp);
         window.Draw(world);
+
+        // time to count the dead epithelial cells
+        if (t == kCountDeadPatchesHour) {
+            world.PrintInfo(patches_fp);
+        }
     }
 
-    fclose(fp);
+    fclose(out_fp);
+    fclose(section_fp);
+    fclose(patches_fp);
 
     // return 1 if quit with in the middle else 0
     if (input.quit) {

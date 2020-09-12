@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <string>
 
 class Window;
 class World;
@@ -11,10 +12,14 @@ class ViewportGrid {
 public:
     SDL_Rect viewport_rect;
 
-    ViewportGrid(Window& window, int w, int h);
+    std::string base_name;
+
+    ViewportGrid(Window& window, int w, int h, const char* base_name);
     ~ViewportGrid();
 
     void Draw(World& world);
+
+    void SaveScreenshot(World& world);
 
     void RepositionDown();
     void RepositionUp();

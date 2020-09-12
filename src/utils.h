@@ -19,15 +19,18 @@ double random_p();
 int return_in_bounds_x(int x);
 int return_in_bounds_y(int y);
 
+int is_out_of_bounds_x(int x);
+int is_out_of_bounds_y(int y);
+
 /* Command line options */
 struct cmd_opts {
     int graphics;
+    char* base_name;
     char* output_filename;
-    char* graph_script_path;
+    char* section_filename;
+    char* patches_filename;
 };
 
-struct cmd_opts parse_cmd_opts(int argc, char** argv);
-
-void plot_graph(struct cmd_opts options);
+void parse_cmd_opts(int argc, char** argv, struct cmd_opts *opts);
 
 #endif

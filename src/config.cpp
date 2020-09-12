@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <string>
+#include <string.h>
 
 int kGridWidth;
 int kGridHeight;
@@ -12,6 +13,7 @@ double kImmLifespan;
 double kCellLifespan;
 double kInfectLifespan;
 double kStvInfectInit;
+double kStvInfectInitLoc;
 double kDipInfectInit;
 double kDeadInit;
 double kStvErrorRate;
@@ -30,9 +32,22 @@ double kTotalEpithelialCells;
 
 double kDipExtInit;
 double kDipExtTime;
+double kDipExtLoc;
+
+int kNumSections;
+
+double neighbour_infect_multiplier[3][3] = { {1, 1, 1}, {1, 1, 1}, {1, 1, 1} };
+
+int kToroidalY;
+
+int graphics_start_x;
+int graphics_start_y;
 
 int kGlobalEpithelialDivision;
+int kRandomImmuneCellSpawn;
 int kSimulationLength;
+
+int kCountDeadPatchesHour;
 
 void store_line(std::string key, std::string value) {
     if (key == "grid_width")
@@ -55,6 +70,9 @@ void store_line(std::string key, std::string value) {
 
     else if (key == "stv_infect_init")
         kStvInfectInit = std::stod(value);
+
+    else if (key == "stv_infect_init_loc")
+        kStvInfectInitLoc = std::stod(value);
 
     else if (key == "dip_infect_init")
         kDipInfectInit = std::stod(value);
@@ -104,11 +122,51 @@ void store_line(std::string key, std::string value) {
     else if (key == "dip_ext_time")
         kDipExtTime = std::stod(value);
 
+    else if (key == "dip_ext_loc") 
+        kDipExtLoc = std::stod(value);
+
+    else if (key == "n_sections")
+        kNumSections = std::stoi(value);
+
+    else if (key == "neighbour_infect_multiplier") {
+        char* s = new char[value.size() + 1];
+        std::copy(value.begin(), value.end(), s);
+        s[value.size()] = '\0';
+
+        // do strtok operation to get the values
+        char* token;
+        const char* delim = " ";
+        token = strtok(s, delim);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                neighbour_infect_multiplier[i][j] = atof(token);
+                token = strtok(NULL, " ");
+            }
+        }
+
+        delete s;
+    }
+
+    else if (key == "toroidal_y") 
+        kToroidalY = std::stoi(value);
+
+    else if (key == "graphics_start_x")
+        graphics_start_x = std::stoi(value);
+
+    else if (key == "graphics_start_y")
+        graphics_start_y = std::stoi(value);
+
     else if (key == "global_epithelial_division") 
         kGlobalEpithelialDivision = std::stoi(value);
 
+    else if (key == "random_immune_cell_spawn")
+        kRandomImmuneCellSpawn = std::stoi(value);
+
     else if (key == "simulation_hours")
         kSimulationLength = std::stod(value);
+
+    else if (key == "count_patch_hour")
+        kCountDeadPatchesHour = std::stod(value);
 }
 
 void parse_config() {
@@ -146,6 +204,8 @@ void parse_config() {
     kTotalEpithelialCells = kGridWidth * kGridHeight;
     kBaseImmCell *= kTotalEpithelialCells;
     kSimulationLength *= kFlowRate;
+
+    kCountDeadPatchesHour *= kFlowRate;
 }
 
 void print_config() {
@@ -157,6 +217,7 @@ void print_config() {
     printf("- Cell lifespan: %f\n", kCellLifespan);
     printf("- Infect lifespan: %f\n", kInfectLifespan);
     printf("- STV infect init: %f\n", kStvInfectInit);
+    printf("- STV infect location: %f\n", kStvInfectInitLoc);
     printf("- DIP infect init: %f\n", kDipInfectInit);
     printf("- Dead init: %f\n", kDeadInit);
     printf("- STV error rate: %f\n", kStvErrorRate);
@@ -173,6 +234,16 @@ void print_config() {
     printf("- Recruitment: %f\n", kRecruitment);
     printf("- DIP external init: %f\n", kDipExtInit);
     printf("- DIP external time: %f\n", kDipExtTime);
+    printf("- DIP external init location: %f\n", kDipExtLoc);
+    printf("- Number of sections: %d\n", kNumSections);
+
+    printf("- Neighbour infect multiplier:\n");
+    for (int i = 0; i < 3; i++) {
+        printf("\t%f %f %f\n", neighbour_infect_multiplier[i][0], neighbour_infect_multiplier[i][1], neighbour_infect_multiplier[i][2]);
+    }
+
     printf("- Global epithelial cell division: %d\n", kGlobalEpithelialDivision);
+    printf("- Random immune cell spawn: %d\n", kRandomImmuneCellSpawn);
     printf("- Simulation length: %dh\n", kSimulationLength);
+    printf("- Counting dead patches at: %d\n", kCountDeadPatchesHour);
 }
