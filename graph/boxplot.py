@@ -74,6 +74,7 @@ if __name__ == "__main__":
     plt.legend()
 
     plt.xticks(np.array(range(0, len(times) * 3, 3)) + 1, times)
-    plt.xlabel('% dead epithelial cells')
-    plt.ylabel('time of introduction of DIPs')
-    plt.show()
+    plt.xlabel('time of introduction of DIPs')
+    plt.ylabel('% dead epithelial cells')
+
+    plt.savefig('boxplot.png', dpi=700)
