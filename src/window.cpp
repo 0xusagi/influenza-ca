@@ -118,10 +118,10 @@ void Window::Draw(World& world) {
     SDL_RenderPresent(renderer);
 
     // save screenshot every 12 hours
-//    int is_12h = world.timestep % (int)(kFlowRate * 12);
-//    if (is_12h == 0) {
-//        viewport_grid->SaveScreenshot(world);
-//    }
+    //int is_12h = world.timestep % (int)(kFlowRate * 12);
+    //if (is_12h == 0) {
+    //    viewport_grid->SaveScreenshot(world);
+    //}
 }
 
 int Window::Move(Input& input) {

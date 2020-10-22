@@ -8,3 +8,4 @@ influenza.png
 *.png
 *.conf
 .vs/
+.clangd/
