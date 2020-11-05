@@ -17,6 +17,7 @@ def set_box_color(bp, color):
 if __name__ == "__main__":
     n = int(sys.argv[1])
     base = sys.argv[2]
+    col_name = sys.argv[3]
 
     data = {}
     for concentration in concentrations:
@@ -24,7 +25,7 @@ if __name__ == "__main__":
         for time in times:
             data[concentration][time] = []
             for i in range(n):
-                filename = base + "{}ext-{}h-norandom{}-out.out".format(concentration, time, i+1)
+                filename = base + "dip{}-{}h{}-out.out".format(concentration, time, i+1)
 
                 d = {}
                 with open(filename, "r") as f:
@@ -57,7 +58,7 @@ if __name__ == "__main__":
         for time in times:
             d = []
             for i in range(n):
-                d.append(max(data[concentration][time][i]['dead']))
+                d.append(max(data[concentration][time][i][col_name]))
 
             boxplot_data.append(d)
 
@@ -67,7 +68,7 @@ if __name__ == "__main__":
         boxplot = plt.boxplot(boxplot_data, positions=positions, sym='', widths=0.6)
         set_box_color(boxplot, color)
 
-        plt.plot([], c=color, label=concentration+"%")
+        plt.plot([], c=color, label=str(float(concentration) * 100) +"%")
 
         j += 1
 

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from statistics import stdev, mean
 
 
 def plot():
@@ -35,12 +36,12 @@ if __name__ == "__main__":
                         split_line = line.split(',')
                         total_infected = 0
                         for name, val in zip(line_names, split_line):
-                            data[name].append(float(val))
+                            data[name].append([float(val)])
 
                             if name == "stv-infected" or name == "dip-infected" or name == "co-infected":
                                 total_infected += float(val)
 
-                        data['total-infected'].append(total_infected)
+                        data['total-infected'].append([total_infected])
 
                 else:
                     if line_count == 0:
@@ -50,19 +51,27 @@ if __name__ == "__main__":
                         split_line = line.split(',')
                         total_infected = 0
                         for name, val in zip(line_names, split_line):
-                            data[name][line_count - 1] += float(val)
+                            data[name][line_count - 1].append(float(val))
 
                             if name == "stv-infected" or name == "dip-infected" or name == "co-infected":
                                 total_infected += float(val)
 
-                        data['total-infected'][line_count - 1] += total_infected
+                        data['total-infected'][line_count - 1].append(total_infected)
 
                 line_count += 1
 
     # average the values
+    averages = {}
+    stdevs = {}
     for name in data:
+        averages[name] = []
+        stdevs[name] = []
         for i in range(len(data[name])):
-            data[name][i] /= n_files
+            averages[name].append(mean(data[name][i]))
+            stdevs[name].append(stdev(data[name][i]))
+
+    print(averages, stdevs)
+
 
     t = line_count - 1
     x = np.arange(t)
@@ -76,15 +85,23 @@ if __name__ == "__main__":
     y_labels = [y / 10 for y in range(11)]
     plt.yticks(y_ticks, y_labels, fontsize=12)
 
-    for key in data.keys():
+    for key in averages.keys():
+        if key == "dip-infected" or key == "co-infected":
+            continue
+        
         # change linestyle for total infected cells
-        if key == "total-infected":
-            plt.plot(x, data[key], label=key, linestyle="dashed")
-        else:
-            plt.plot(x, data[key], label=key)
+        if key != "total-infected":
+            lower = np.array(averages[key]) - np.array(stdevs[key])
+            upper = np.array(averages[key]) + np.array(stdevs[key])
+
+            lower[lower < 0] = 0
+            upper[upper > 1] = 1
+
+            plt.plot(x, averages[key], label=key if key != "stv-infected" else "infected")
+            plt.fill_between(x, lower, upper)
 
     plt.legend(loc='upper right')
     plt.xlabel('time (days)', fontsize=12)
     plt.ylabel('% total cells', fontsize=12)
 
-    plt.savefig('influenza.png')
+    plt.savefig('stdevs.png')
