@@ -12,6 +12,7 @@ To build the project:
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
+make
 ```
 
 ## Running the code
