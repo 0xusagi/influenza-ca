@@ -12,8 +12,9 @@
 int kCellWidthPixels = 16; 
 int kCellHeightPixels = 16;
 
-ViewportGrid::ViewportGrid(Window& window, int viewport_width, int viewport_height) 
-    : renderer(window.renderer) {
+ViewportGrid::ViewportGrid(Window& window, int viewport_width, int viewport_height, const char* base_name) 
+    : renderer(window.renderer)
+    , base_name(base_name) {
 
     // create the viewport rectangle 
     viewport_rect.x = 0;
@@ -28,9 +29,13 @@ ViewportGrid::ViewportGrid(Window& window, int viewport_width, int viewport_heig
     max_x = viewport_rect.w / kCellWidthPixels;
     max_y = viewport_rect.h / kCellHeightPixels;
 
-    // set to the middle of the grid
-    x0 = kGridWidth / 2 - max_x / 2;
-    y0 = kGridHeight / 2 - max_y / 2;
+    // set to the value determined by config
+    x0 = graphics_start_x;
+    y0 = graphics_start_y;
+
+    // handle if too far down so resize 
+    if (x0 + max_x >= kGridWidth) x0 = kGridWidth - max_x;
+    if (y0 + max_y >= kGridHeight) y0 = kGridHeight - max_y;
 
     //TODO resize the viewport and screen if the grid size in pixels is smaller
     // than default
@@ -166,6 +171,38 @@ void ViewportGrid::Draw(World& world) {
             SDL_RenderCopy(renderer, immune_cell_img, NULL, &fill_rect);
         }
     }
+
+    // save screenshot every 12 hours
+    int is_12h = world.timestep % (int)(kFlowRate * 12);
+    if (is_12h == 0) {
+        SaveScreenshot(world);
+    }
+}
+
+void ViewportGrid::SaveScreenshot(World &world) {
+    SDL_Rect _viewport;
+    SDL_RenderGetViewport(renderer, &_viewport);
+
+    SDL_Surface *sshot = SDL_CreateRGBSurface(0, viewport_rect.w, viewport_rect.h, 32, 0, 0, 0, 0);
+
+    if (sshot == NULL) {
+        SDL_Log("SDL_CreateRGBSurface() failed: %s\n", SDL_GetError());
+        return;
+    }
+
+    if (SDL_RenderReadPixels(renderer, &viewport_rect, sshot->format->format, sshot->pixels, sshot->pitch) != 0) {
+        SDL_Log("SDL_RenderReadPixels() failed: %s\n", SDL_GetError());
+    }
+    else {
+
+        int hour = world.timestep / kFlowRate;
+        std::string sshot_name = base_name + "-" + std::to_string(hour) + ".png";
+
+        if (IMG_SavePNG(sshot, sshot_name.c_str()) != 0) {
+            printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
+        }
+    }
+    SDL_FreeSurface(sshot);
 }
 
 void ViewportGrid::RepositionDown() {

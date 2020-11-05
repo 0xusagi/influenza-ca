@@ -9,7 +9,17 @@ set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-include_directories (src)
+include_directories (
+    src 
+    third_party/lodepng
+)
+
+if ( CMAKE_COMPILER_IS_GNUCC )
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+endif()
+if ( MSVC )
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
+endif()
 
 set (src 
         src/config.cpp 
@@ -23,6 +33,9 @@ set (src
         src/viewport_grid.cpp 
         src/window.cpp 
         src/world.cpp)
+
+set (png_src
+        third_party/lodepng/lodepng.cpp)
 
 add_executable(simulation ${src})
 

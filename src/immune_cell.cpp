@@ -63,7 +63,12 @@ void ImmuneCell::UpdateMature(World& world) {
 
 void ImmuneCell::Move() {
     x = return_in_bounds_x(x + random_dx());
-    y = return_in_bounds_y(y + random_dy());
+    int new_y = return_in_bounds_y(y + random_dy());
+
+    // handle for out of bounds for non-toroidal boundary condition
+    if (!is_out_of_bounds_y(new_y)) {
+        y = new_y;
+    }
 }
 
 int ImmuneCell::IsDeadFromOldAge() {

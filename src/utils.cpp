@@ -38,6 +38,11 @@ int return_in_bounds_x(int x) {
 }
 
 int return_in_bounds_y(int y) {
+    // No toroidal condition for y boundary so just return the out of bounds
+    if (!kToroidalY) {
+        return y;
+    }
+
     if (y >= kGridHeight) {
         return 0;
     }
@@ -48,43 +53,54 @@ int return_in_bounds_y(int y) {
     return y;
 }
 
-struct cmd_opts parse_cmd_opts(int argc, char** argv) {
-    struct cmd_opts opts;
-    opts.graphics = 0;
-    opts.output_filename = "";
-    opts.graph_script_path = "../graph/graph.py"; // default path of graph script path
+int is_out_of_bounds_x(int x) {
+    return x >= kGridWidth || x < 0;
+}
+
+int is_out_of_bounds_y(int y) {
+    return y >= kGridHeight || y < 0;
+}
+
+void parse_cmd_opts(int argc, char** argv, struct cmd_opts *opts) {
+    opts->graphics = 0;
+    opts->output_filename = "";
+    opts->section_filename = "";
 
     printf("Starting application with flags: \n");
 
     int c;
-    while ((c = getopt(argc, argv, "gf:")) != -1) {
+    while ((c = getopt(argc, argv, "gn:")) != -1) {
         switch (c) {
             case 'g':
                 printf("\tgraphics\n");
-                opts.graphics = 1;
+                opts->graphics = 1;
                 break;
 
-            case 'f':
-                printf("\toutput file: %s\n", optarg);
-                opts.output_filename = optarg;
-                break;
+            case 'n':
+                int optarg_len = strlen(optarg);
+                opts->base_name = new char[optarg_len + 1];
+                strcpy(opts->base_name, optarg);
 
-            case 's':
-                printf("\tgraph script file: %s\n", optarg);
-                opts.graph_script_path = optarg;
-                break;;
+                const char* output_filename_suffix = "-out.out";
+                opts->output_filename = new char[optarg_len + strlen(output_filename_suffix) + 1];
+                strcpy(opts->output_filename, optarg);
+                strcat(opts->output_filename, output_filename_suffix);
+
+                const char* section_filename_suffix = "-section.out";
+                opts->section_filename = new char[optarg_len + strlen(section_filename_suffix) + 1];
+                strcpy(opts->section_filename, optarg);
+                strcat(opts->section_filename, section_filename_suffix);
+
+                const char* patches_filename_suffix = "-patches.out";
+                opts->patches_filename = new char[optarg_len + strlen(patches_filename_suffix) + 1];
+                strcpy(opts->patches_filename, optarg);
+                strcat(opts->patches_filename, patches_filename_suffix);
+
+                printf("\tbase name: %s\n", opts->base_name);
+                printf("\toutput file: %s\n", opts->output_filename);
+                printf("\tsection output file: %s\n", opts->section_filename);
+                printf("\tpatches output file: %s\n", opts->patches_filename);
+                break;
         }
     }
-
-    return opts;
-}
-
-void plot_graph(struct cmd_opts options) {
-    char* script_call = new char[strlen("python3 ") + strlen(options.graph_script_path) + strlen(options.output_filename) + 1 + 1];
-    strcpy(script_call, "python3 ");
-    strcat(script_call, options.graph_script_path);
-    strcat(script_call, " ");
-    strcat(script_call, options.output_filename);
-
-    std::system(script_call);
 }

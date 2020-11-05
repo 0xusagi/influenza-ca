@@ -3,7 +3,9 @@
 #include <SDL_ttf.h>
 #include <cstdlib>
 
+#include "config.h"
 #include "input.h"
+#include "utils.h"
 #include "viewport_info.h"
 #include "viewport_grid.h"
 #include "window.h"
@@ -16,8 +18,8 @@ int kViewportGridRatio = 3;
 int kViewportInfoRatio = 1;
 int kTotalRatio = kViewportGridRatio + kViewportInfoRatio;
 
-Window::Window(int on) 
-    : on(on)
+Window::Window(struct cmd_opts &options) 
+    : on(options.graphics)
     , width(kDefaultWindowWidth)
     , height(kDefaultWindowHeight) {
 
@@ -67,7 +69,7 @@ Window::Window(int on)
     // create viewports
     int viewport_grid_width = width * kViewportGridRatio / kTotalRatio;
     int viewport_grid_height = height;
-    viewport_grid = new ViewportGrid(*this, viewport_grid_width, viewport_grid_height);
+    viewport_grid = new ViewportGrid(*this, viewport_grid_width, viewport_grid_height, options.base_name);
 
     int viewport_info_width = width * kViewportInfoRatio / kTotalRatio;
     int viewport_info_height = height;
@@ -114,6 +116,12 @@ void Window::Draw(World& world) {
 
     // draw to the screen
     SDL_RenderPresent(renderer);
+
+    // save screenshot every 12 hours
+//    int is_12h = world.timestep % (int)(kFlowRate * 12);
+//    if (is_12h == 0) {
+//        viewport_grid->SaveScreenshot(world);
+//    }
 }
 
 int Window::Move(Input& input) {

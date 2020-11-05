@@ -13,13 +13,20 @@ fi
 
 # get arguments additional arguments
 args=""
-while getopts "gn:" arg; do
+offset=0
+while getopts "gn:s:o:" arg; do
     case $arg in
         n)
             n=${OPTARG}
             ;;
         g) 
             args="${args} -g"
+            ;;
+        s) 
+            basename=${OPTARG}
+            ;;
+        o)
+            offset=${OPTARG}
             ;;
         *)
             usage
@@ -32,26 +39,25 @@ if [ -z "${n}" ]; then
     usage
 fi
 
-all_out_names=""
-
+all_outnames=""
+all_section_outnames=""
 
 declare -i i
-i=1
+i=$((offset + 1))
+n=$((n + offset))
+echo $n
 while [ $i -le $n ]
 do
-    outname="${out_dir}/out${i}.csv"
+    name="${out_dir}/${basename}${i}"
+    outname="${name}-out.out"
+    sectionoutname="${name}-section.out"
 
     # run the simulation
-    ./build/simulation -f $outname $args
+    ./build/simulation -n $name $args
 
     if [ $? -ne "0" ]; then
         exit 1
     fi
 
-    all_outnames="${all_outnames} ${outname}"
     i+=1
 done
-
-
-# plot the graph
-python3 graph/graph.py $all_outnames

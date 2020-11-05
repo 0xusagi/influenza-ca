@@ -5,6 +5,7 @@ env/
 .DS_Store
 build/
 influenza.png
+*.png
 *.conf
 .vs/
 .clangd/
